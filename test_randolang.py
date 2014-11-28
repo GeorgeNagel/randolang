@@ -2,7 +2,8 @@ from unittest import TestCase
 
 from randolang import (
     phones_to_word, generate_transitions, _clean_phone,
-    generate_transitions_dict, add_transition_to_dict)
+    generate_transitions_dict, add_transition_to_dict,
+    order_from_transitions_dict, generate_word, _generate_phone)
 
 
 class TestPhonesToWord(TestCase):
@@ -140,3 +141,95 @@ class AddTransitionTestCase(TestCase):
                 }
             }
         )
+
+class OrderFromTransitionsDictTest(TestCase):
+    def test_first_order_transitions_dict(self):
+        transitions_dict = {
+            'B': {
+                'AH': 1
+            }
+        }
+        order = order_from_transitions_dict(transitions_dict)
+        self.assertEqual(order, 1)
+
+    def test_second_order_transitions_dict(self):
+        transitions_dict = {
+            'B': {
+                'UH': {
+                    'B': 1
+                }
+            }
+        }
+        order = order_from_transitions_dict(transitions_dict)
+        self.assertEqual(order, 2)
+
+class GenerateWordTest(TestCase):
+    def test_first_order_word(self):
+        transitions_dict = {
+            'START': {
+                'B': 1
+            },
+            'B': {
+                'UH': 1
+            },
+            'UH': {
+                'STOP': 1
+            }
+        }
+        word = generate_word(transitions_dict, 10)
+        self.assertEqual(word, 'buh')
+
+    def test_long_word_cutoff(self):
+        transitions_dict = {
+            'START': {
+                'B': 1
+            },
+            'B': {
+                'UH': 1
+            },
+            'UH': {
+                'L': 1
+            },
+            'L': {
+                'STOP': 1
+            }
+        }
+        word = generate_word(transitions_dict, 1)
+        self.assertEqual(word, 'b')
+
+    def test_second_order_word(self):
+        transitions_dict = {
+            'START': {
+                'START': {
+                    'B': 1
+                },
+                'B': {
+                    'UH': 1
+                }
+            },
+            'B': {
+                'UH': {
+                    'STOP': 1
+                }
+            },
+            'UH': {
+                'STOP': {
+                    'STOP': 1
+                }
+            }
+        }
+        word = generate_word(transitions_dict, 10)
+        self.assertEqual(word, 'buh')
+
+class GeneratePhonemeTest(TestCase):
+    def test_generate_phoneme(self):
+        prior_phones = ['START', 'START']
+        transitions_dict = {
+            'START': {
+                'START': {
+                    'B': 1
+                }
+            }
+        }
+        phone = _generate_phone(transitions_dict, prior_phones)
+        self.assertEqual(phone, 'B')

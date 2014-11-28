@@ -104,45 +104,46 @@ def add_transition_to_dict(transitions_dict, transition):
     return transitions_dict
 
 
-def generate_word_normal(transitions_dict):
-    # generate words based on assumed normal distributions of phonemes
-    current_phoneme = 'START'
-    phones = []
-    iters = 0
-    next_phoneme = ''
-    while next_phoneme != 'STOP' and iters <= 10:
-        iters +=1
-        phones.append(current_phoneme)
-        possible_nexts = transitions_dict[current_phoneme].keys()
-        next_phoneme = random.choice(possible_nexts)
-        current_phoneme = next_phoneme
+def order_from_transitions_dict(transitions_dict, order=0):
+    """Calculate the order of a transitions_dict."""
+    for key in transitions_dict:
+        _order = order + 1
+        if isinstance(transitions_dict[key], dict):
+            order = order_from_transitions_dict(transitions_dict[key], order=_order)
+        break
+    return order
 
-    phones = phones[1:]
+
+def generate_word(transitions_dict, max_phone_size):
+    """generate words based on the phoneme transition probabilities."""
+    order = order_from_transitions_dict(transitions_dict)
+    phones = ['START'] * order
+    prior_phones = phones
+    iters = 0
+    while prior_phones != ['STOP']*order and iters <= max_phone_size + order - 1:
+        iters +=1
+        next_phone = _generate_phone(transitions_dict, prior_phones)
+        phones.append(next_phone)
+        prior_phones = phones[-order:]
+
+    # Remove 'START' and 'STOP' markers
+    phones = phones[order:-order]
     novel_word = phones_to_word(phones)
     return novel_word
 
-def generate_word_pdf(transitions_dict):
-    # generate words based on the pdf of phoneme transitions
-    current_phoneme = 'START'
-    phones = []
-    iters = 0
-    next_phoneme = ''
-    while next_phoneme != 'STOP' and iters <= 10:
-        iters +=1
-        phones.append(current_phoneme)
-        # Generate the possible transitions using the transitions dict
-        # values as the pdf.
-        possible_nexts = []
-        for next_phoneme in transitions_dict[current_phoneme]:
-            number_of_appearances = transitions_dict[current_phoneme][next_phoneme]
-            nexts = [next_phoneme]*number_of_appearances
-            possible_nexts.extend(nexts)
-        next_phoneme = random.choice(possible_nexts)
-        current_phoneme = next_phoneme
-
-    phones = phones[1:]
-    novel_word = phones_to_word(phones)
-    return novel_word
+def _generate_phone(transitions_dict, prior_phones):
+    """Generate the next phone in the sequence."""
+    sub_dict = transitions_dict
+    for prior_phone in prior_phones:
+        sub_dict = sub_dict[prior_phone]
+    # Now select the next phone based on its probability of occurrence
+    possible_nexts = []
+    for next_phoneme in sub_dict:
+        number_of_appearances = sub_dict[next_phoneme]
+        nexts = [next_phoneme]*number_of_appearances
+        possible_nexts.extend(nexts)
+    next_phoneme = random.choice(possible_nexts)
+    return next_phoneme
 
 
 def entries_from_cmudict():
