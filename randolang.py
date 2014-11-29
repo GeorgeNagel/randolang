@@ -146,10 +146,29 @@ def _generate_phone(transitions_dict, prior_phones):
     return next_phoneme
 
 
-def entries_from_cmudict():
+def entries_from_cmudict(filt=None):
+    """Create a list of entries from the cmu corpus.
+    If filt='Austen', only uses words that appear in Jane Austen's Emma.
+    """
     cwd = os.getcwd()
     data_dir = 'data'
     data_path = os.path.join(cwd, data_dir)
     nltk.data.path = [data_path]
-    entries = nltk.corpus.cmudict.entries()
+    if filt is None:
+        entries = nltk.corpus.cmudict.entries()
+    elif filt == 'Austen':
+        entry_dict = nltk.corpus.cmudict.dict()
+        entries = nltk.corpus.cmudict.entries()
+        filter_words = austen_words()
+        filtered_entries = [(entry[0], entry[1]) for entry in entries if entry[0] in filter_words]
+        entries = filtered_entries
     return entries
+
+def austen_words():
+    cwd = os.getcwd()
+    data_dir = 'data'
+    data_path = os.path.join(cwd, data_dir)
+    nltk.data.path = [data_path]
+    emma_tokenized = nltk.corpus.gutenberg.words('austen-emma.txt')
+    emma_words = set([token.lower() for token in emma_tokenized])
+    return emma_words

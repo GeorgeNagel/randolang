@@ -3,7 +3,8 @@ from unittest import TestCase
 from randolang import (
     phones_to_word, generate_transitions, _clean_phone,
     generate_transitions_dict, add_transition_to_dict,
-    order_from_transitions_dict, generate_word, _generate_phone)
+    order_from_transitions_dict, generate_word, _generate_phone,
+    entries_from_cmudict, austen_words)
 
 
 class TestPhonesToWord(TestCase):
@@ -233,3 +234,31 @@ class GeneratePhonemeTest(TestCase):
         }
         phone = _generate_phone(transitions_dict, prior_phones)
         self.assertEqual(phone, 'B')
+
+class EntriesTest(TestCase):
+    def test_entries_from_cmudict(self):
+        entries = entries_from_cmudict()
+        self.assertEqual(
+            entries[:2],
+            [(u'a', [u'AH0']), (u'a.', [u'EY1'])]
+        )
+
+    def test_filtered_entries(self):
+        entries = entries_from_cmudict(filt='Austen')
+        self.assertEqual(
+            entries[:2],
+            [(u'a', [u'AH0']), (u'a', [u'EY1'])]
+        )
+
+class AustenWordsTest(TestCase):
+    def test_austen_words(self):
+        words = [word for word in austen_words()]
+        words = sorted(words)[-10:]
+        self.assertEqual(
+            words,
+            [
+                u'young', u'younger', u'youngest',
+                u'your', u'yours', u'yourself', u'youth',
+                u'youthful', u'zeal', u'zigzags'
+            ]
+        )

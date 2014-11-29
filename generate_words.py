@@ -4,7 +4,7 @@ WORDS_TO_GENERATE = 100
 MAX_PHONE_SIZE = 100
 ORDER = 2
 
-cmu_entries = entries_from_cmudict()
+cmu_entries = entries_from_cmudict(filt='Austen')
 
 
 print "Generating transitions dict."
