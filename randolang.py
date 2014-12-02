@@ -4,57 +4,129 @@ import os
 
 import nltk
 
-conversions = {
-    'AA': 'ah',
-    'AE': 'a',
-    'AH': 'u',
-    'AO': 'aw',
-    'AW': 'ou',
-    'AY': 'ai',
-    'B': 'b',
-    'CH': 'ch',
-    'D': 'd',
-    'DH': 'th',
-    'EH': 'e',
-    'ER': 'ur',
-    'EY': 'ay',
-    'F': 'f',
-    'G': 'g',
-    'HH': 'h',
-    'IH': 'i',
-    'IY': 'ee',
-    'JH': 'j',
-    'K': 'c',
-    'L': 'l',
-    'M': 'm',
-    'N': 'n',
-    'NG': 'ng',
-    'OW': 'oh',
-    'OY': 'oi',
-    'P': 'p',
-    'R': 'r',
-    'S': 's',
-    'SH': 'sh',
-    'T': 't',
-    'TH': 'th',
-    'UH': 'uh',
-    'UW': 'oo',
-    'V': 'v',
-    'W': 'w',
-    'Y': 'y',
-    'Z': 'z',
-    'ZH': 'zh'
-}
 
+vowels = [
+    'AA', # odd
+    'AH', # hut
+    'AW', # cow
+    'EH', # Ed
+    'EY', # ate
+    'IH', # it
+    'OW', # oat
+    'UH', # hood
+    'AE', # at
+    'AO', # ought
+    'AY', # hide
+    'ER', # hurt
+    'IY', # eat
+    'OY', # toy
+    'UW', # two
+]
+consonants = [
+    'B', 'CH', 'D', 'DH', 'F', 'G', 'HH', 'JH',
+    'K', 'L', 'M', 'N', 'NG', 'P', 'R', 'S',
+    'SH', 'T', 'TH', 'V', 'W', 'Y', 'Z', 'ZH'
+]
+
+short_vowel_replacement = {
+    'AE': 'a', # after
+    'EH': 'e', # hen
+    'IH': 'i', # hit
+    'AA': 'o', # hot
+    'AO': 'augh', # taught
+    'AH': 'u', # hut
+}
+long_vowel_replacement = {
+    # Syl: (start, intermediate, before last cons., after last cons.)
+    'AW': ('ou', 'ow', '', 'ow'), # cow
+    'EY': ('a', 'ay', 'a', 'ay'), # ate
+    'OW': ('o', 'o', 'oa', 'o'), # oat
+    'UH': ('u', 'u', 'oo', 'u'), # hood
+    'AY': ('i', 'ay', 'i', 'ye'), # hide
+    'ER': ('ur', 'ur', 'er', 'er'), # hurt
+    'IY': ('ea', 'ee', 'ee', 'y'), # eat
+    'OY': ('oy', 'oy', 'oi', 'oy'), # toy
+    'UW': ('u', 'u', 'oo', 'oo'), # two
+}
 
 def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
     Note: Assumes emphasis numbers have been stripped.
     """
-    translated_phone_list = [conversions[phone] for phone in phones]
-    word = ''.join(translated_phone_list)
+
+    # Replace short vowels
+    protected = _protect_short_vowels(phones)
+    short_replaced = _handle_short_vowels(protected)
+    long_replaced = _handle_long_vowels(short_replaced)
+
+    lowered_phones = [phone.lower() for phone in long_replaced]
+    word = ''.join(lowered_phones)
     return word
 
+def _protect_short_vowels(phones):
+    """Double consonants following short vowels."""
+    protected_phones = phones
+    if len(phones) > 2:
+        for index, phone in enumerate(protected_phones):
+            if protected_phones[index-1] in short_vowel_replacement:
+                protected_phones[index] = protected_phones[index].lower()*2
+    return protected_phones
+
+def _handle_short_vowels(phones):
+    """Short vowels get replaced by single, lowercase letter"""
+    short_replaced = []
+    for phone in phones:
+        if phone in short_vowel_replacement:
+            short_replaced.append(short_vowel_replacement[phone])
+        else:
+            short_replaced.append(phone)
+    return short_replaced
+
+def _handle_long_vowels(phones):
+    # Handle start long vowels
+    long_replaced = phones
+    if phones[0] in long_vowel_replacement:
+        long_replaced[0] = long_vowel_replacement[phones[0]][0]
+
+    # Handle long vowel before last consonant
+    if len(phones) > 1:
+        if phones[-1] not in vowels:
+            previous_long_vowel = phones[-2]
+            # Special case handling for 'ates' types (['EY', 'T', 'S'])
+            if phones[-2] in long_vowel_replacement:
+                long_replaced[-2] = long_vowel_replacement[phones[-2]][2]
+                long_replaced.append('e')
+            elif phones[-2] in consonants:
+                if len(phones) > 2:
+                    long_replaced[-3] = long_vowel_replacement[phones[-3]][2]
+                    long_replaced.insert(-1, 'e')
+
+    # Handle ending long vowels
+    if phones[-1] in long_vowel_replacement:
+        long_replaced[-1] = long_vowel_replacement[phones[-1]][3]
+
+    # Handle remaining (intermediate) long vowels
+    for index, phone in enumerate(long_replaced):
+        if phone in long_vowel_replacement:
+            long_replaced[index] = long_vowel_replacement[phone][1]
+
+    return long_replaced
+
+
+def _handle_c(phones):
+    """C sounds get replaced."""
+
+    # cc to protect short vowel
+
+    # use k when followed by e i or y
+
+    # ck protects short vowel when followed by e i or y
+
+    # ck always follows short vowel at the end of a monosyllable
+
+    # k used at the end of monosyllables for the rest
+
+    # fall back to using plain c
 
 def generate_transitions(phones, order=1):
     """Takes a list of cmudict phones and generates a list of transitions pairs."""
@@ -163,6 +235,7 @@ def entries_from_cmudict(filt=None):
         filtered_entries = [(entry[0], entry[1]) for entry in entries if entry[0] in filter_words]
         entries = filtered_entries
     return entries
+
 
 def austen_words():
     cwd = os.getcwd()
