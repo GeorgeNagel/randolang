@@ -68,8 +68,11 @@ def _protect_short_vowels(phones):
     protected_phones = phones
     if len(phones) > 2:
         for index, phone in enumerate(protected_phones):
-            if protected_phones[index-1] in short_vowel_replacement:
-                protected_phones[index] = protected_phones[index].lower()*2
+            if phone in short_vowel_replacement:
+                if index+2 < len(protected_phones):
+                    if protected_phones[index+1] in consonants:
+                        if protected_phones[index+2] not in consonants:
+                            protected_phones[index+1] = protected_phones[index+1].lower()*2
     return protected_phones
 
 def _handle_short_vowels(phones):

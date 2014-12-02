@@ -19,6 +19,16 @@ class TestPhonesToWord(TestCase):
         phones_protected = _protect_short_vowels(phones)
         self.assertEqual(phones_protected, ['B', 'IH', 'tt', 'ER'])
 
+        # Don't double when two consonants are next to each other
+        phones = ['IH', 'N', 'K']
+        phones_protected = _protect_short_vowels(phones)
+        self.assertEqual(phones_protected, ['IH', 'N', 'K'])
+
+        # Don't double when there's no following vowel
+        phones = ['F', 'EH', 'N']
+        phones_protected = _protect_short_vowels(phones)
+        self.assertEqual(phones_protected, ['F', 'EH', 'N'])
+
 
     def test_handle_short_vowels(self):
         # Short A
