@@ -33,16 +33,16 @@ short_vowel_replacement = {
     'EH': 'e', # hen
     'IH': 'i', # hit
     'AA': 'o', # hot
-    'AO': 'augh', # taught
+    'AO': 'o', # taught
     'AH': 'u', # hut
 }
 long_vowel_replacement = {
     # Syl: (start, intermediate, before last cons., after last cons.)
-    'AW': ('ou', 'ow', '', 'ow'), # cow
+    'AW': ('ou', 'ou', 'ou', 'ow'), # cow
     'EY': ('a', 'ay', 'a', 'ay'), # ate
     'OW': ('o', 'o', 'oa', 'o'), # oat
-    'UH': ('u', 'u', 'oo', 'u'), # hood
-    'AY': ('i', 'ay', 'i', 'ye'), # hide
+    'UH': ('u', 'oo', 'oo', 'u'), # hood
+    'AY': ('i', 'ie', 'i', 'ye'), # hide
     'ER': ('ur', 'ur', 'er', 'er'), # hurt
     'IY': ('ea', 'ee', 'ee', 'y'), # eat
     'OY': ('oy', 'oy', 'oi', 'oy'), # toy
@@ -55,11 +55,13 @@ def phones_to_word(phones):
     """
 
     # Replace short vowels
-    protected = _protect_short_vowels(phones)
+    q_replaced = _handle_q(phones)
+    protected = _protect_short_vowels(q_replaced)
     short_replaced = _handle_short_vowels(protected)
     long_replaced = _handle_long_vowels(short_replaced)
+    c_replaced = _handle_c(long_replaced)
 
-    lowered_phones = [phone.lower() for phone in long_replaced]
+    lowered_phones = [phone.lower() for phone in c_replaced]
     word = ''.join(lowered_phones)
     return word
 
@@ -71,8 +73,10 @@ def _protect_short_vowels(phones):
             if phone in short_vowel_replacement:
                 if index+2 < len(protected_phones):
                     if protected_phones[index+1] in consonants:
-                        if protected_phones[index+2] not in consonants:
-                            protected_phones[index+1] = protected_phones[index+1].lower()*2
+                        # Make sure you don't double HH, TH, SH, ZH, DH, JH
+                        if len(protected_phones[index+1]) == 1:
+                            if protected_phones[index+2] not in consonants:
+                                protected_phones[index+1] = protected_phones[index+1].lower()*2
     return protected_phones
 
 def _handle_short_vowels(phones):
@@ -116,20 +120,52 @@ def _handle_long_vowels(phones):
     return long_replaced
 
 
+def _handle_q(phones):
+    q_replaced = []
+    index = 0
+    while index < len(phones):
+        phone = phones[index]
+        if index+1 < len(phones):
+            if phone == 'K' and phones[index+1] == 'W':
+                phone = 'qu'
+                # Skip the w and continue with the rest of the phones
+                index += 1
+        q_replaced.append(phone)
+        index += 1
+    return q_replaced
+
+
 def _handle_c(phones):
     """C sounds get replaced."""
 
+    c_replaced = phones
+
     # cc to protect short vowel
+    # ck protects short vowel when followed by e i or y
+    for index, phone in enumerate(c_replaced):
+        if phone == 'kk':
+            c_replaced[index] = 'cc'
+            if index+1 < len(c_replaced):
+                if c_replaced[index+1][0] in ['e', 'i', 'y']:
+                    c_replaced[index] = 'ck'
 
     # use k when followed by e i or y
-
-    # ck protects short vowel when followed by e i or y
+    for index, phone in enumerate(c_replaced):
+        if index+1 < len(c_replaced):
+            if phone == 'K' and c_replaced[index+1][0] in ['e', 'i', 'y']:
+                c_replaced[index] = 'k'
 
     # ck always follows short vowel at the end of a monosyllable
-
-    # k used at the end of monosyllables for the rest
+    if c_replaced[-1] == 'K':
+        c_replaced[-1] = 'ck'
 
     # fall back to using plain c
+    for index, phone in enumerate(c_replaced):
+        if phone == 'K':
+            c_replaced[index] = 'c'
+
+    return c_replaced
+
 
 def generate_transitions(phones, order=1):
     """Takes a list of cmudict phones and generates a list of transitions pairs."""

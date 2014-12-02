@@ -1,8 +1,8 @@
 from randolang import generate_word, generate_transitions_dict, entries_from_cmudict
 
-WORDS_TO_GENERATE = 100
+WORDS_TO_GENERATE = 1000
 MAX_PHONE_SIZE = 100
-ORDER = 2
+ORDER = 3
 
 cmu_entries = entries_from_cmudict(filt='Austen')
 

@@ -5,7 +5,8 @@ from randolang import (
     generate_transitions_dict, add_transition_to_dict,
     order_from_transitions_dict, generate_word, _generate_phone,
     entries_from_cmudict, austen_words, phones_to_word,
-    _protect_short_vowels, _handle_long_vowels)
+    _protect_short_vowels, _handle_long_vowels, _handle_c,
+    _handle_q)
 
 
 class TestPhonesToWord(TestCase):
@@ -13,6 +14,10 @@ class TestPhonesToWord(TestCase):
         phones = ['AE', 'T']
         word = phones_to_word(phones)
         self.assertEqual(word, 'at')
+
+        phones = ['AE', 'K', 'W', 'IH', 'T']
+        word = phones_to_word(phones)
+        self.assertEqual(word, 'aquit')
 
     def test_protect_short_vowels(self):
         phones = ['B', 'IH', 'T', 'ER']
@@ -28,6 +33,9 @@ class TestPhonesToWord(TestCase):
         phones = ['F', 'EH', 'N']
         phones_protected = _protect_short_vowels(phones)
         self.assertEqual(phones_protected, ['F', 'EH', 'N'])
+
+        # Don't double DH
+        phones = ['P', 'UH', 'DH', 'IY']
 
 
     def test_handle_short_vowels(self):
@@ -54,7 +62,7 @@ class TestPhonesToWord(TestCase):
         # Aught sound
         phones = ['T', 'AO', 'T']
         short_replaced = _handle_short_vowels(phones)
-        self.assertEqual(short_replaced, ['T', 'augh', 'T'])
+        self.assertEqual(short_replaced, ['T', 'o', 'T'])
 
         # Short U
         phones = ['AH', 'P']
@@ -117,27 +125,36 @@ class TestPhonesToWord(TestCase):
             ['S', 'K', 'o', 'L', 'D', 'Z']
         )
 
-    # def test_handle_c(self):
-    #     # Use cc to protect short vowel
-    #     phones = ['S', 'T', 'u', 'K', 'OW']
-    #     c_replaced = _handle_c(phones)
-    #     self.assertEqual(c_replaced, ['S', 'T', 'u', 'cc', 'OW'])
+    def test_handle_c(self):
+        # Use cc to protect short vowel
+        phones = ['S', 'T', 'u', 'kk', 'OW']
+        c_replaced = _handle_c(phones)
+        self.assertEqual(c_replaced, ['S', 'T', 'u', 'cc', 'OW'])
 
-    #     # Use k when followed by e i or y
-    #     phones = ['K', 'i', 'N']
-    #     c_replaced = _handle_c(phones)
-    #     self.assertEqual(c_replaced, ['k', 'i', 'N'])
+        # Use k when followed by e i or y
+        phones = ['K', 'i', 'N']
+        c_replaced = _handle_c(phones)
+        self.assertEqual(c_replaced, ['k', 'i', 'N'])
 
-    #     phones = ['M', 'a', 'K', 'e']
-    #     c_replaced = _handle_c(phones)
-    #     self.assertEqual(c_replaced, ['k', 'i', 'N'])
+        phones = ['M', 'a', 'K', 'e']
+        c_replaced = _handle_c(phones)
+        self.assertEqual(c_replaced, ['M', 'a', 'k', 'e'])
 
-    #     # 
+        # ck follows short vowel at the end of word
+        phones = ['T', 'R', 'i', 'K']
+        c_replaced = _handle_c(phones)
+        self.assertEqual(c_replaced, ['T', 'R', 'i', 'ck'])
 
-    #     # Fall back to C
-    #     phones = ['K', 'AE', 'T']
-    #     c_replaced = _handle_c(phones)
-    #     self.assertEqual(c_replaced, ['c', 'AE', 'T'])
+        # Fall back to C
+        phones = ['K', 'a', 'T']
+        c_replaced = _handle_c(phones)
+        self.assertEqual(c_replaced, ['c', 'a', 'T'])
+
+    def test_handle_q(self):
+        phones = ['a', 'K', 'W', 'i', 'er']
+        q_replaced = _handle_q(phones)
+        self.assertEqual(q_replaced, ['a', 'qu', 'i', 'er'])
+
 
 class TestGenerateTransitions(TestCase):
     def test_first_order_transitions(self):
