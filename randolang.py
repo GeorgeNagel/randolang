@@ -97,7 +97,7 @@ def _handle_long_vowels(phones):
                 long_replaced[-2] = long_vowel_replacement[phones[-2]][2]
                 long_replaced.append('e')
             elif phones[-2] in consonants:
-                if len(phones) > 2:
+                if len(phones) > 2 and phones[-3] in long_vowel_replacement:
                     long_replaced[-3] = long_vowel_replacement[phones[-3]][2]
                     long_replaced.insert(-1, 'e')
 
@@ -200,7 +200,9 @@ def generate_word(transitions_dict, max_phone_size):
 
     # Remove 'START' and 'STOP' markers
     phones = phones[order:-order]
+    print "Phones: %s" % phones
     novel_word = phones_to_word(phones)
+    print "Word: %s" % novel_word
     return novel_word
 
 def _generate_phone(transitions_dict, prior_phones):

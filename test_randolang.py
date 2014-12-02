@@ -99,6 +99,14 @@ class TestPhonesToWord(TestCase):
             ['a', 'M']
         )
 
+        # Three consonants in a row
+        phones = ['S', 'K', 'OW', 'L', 'D', 'Z']
+        long_replaced = _handle_long_vowels(phones)
+        self.assertEqual(
+            long_replaced,
+            ['S', 'K', 'o', 'L', 'D', 'Z']
+        )
+
     # def test_handle_c(self):
     #     # Use cc to protect short vowel
     #     phones = ['S', 'T', 'u', 'K', 'OW']
