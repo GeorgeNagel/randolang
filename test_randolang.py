@@ -6,7 +6,7 @@ from randolang import (
     order_from_transitions_dict, generate_word, _generate_phone,
     entries_from_cmudict, austen_words, phones_to_word,
     _protect_short_vowels, _handle_long_vowels, _handle_c,
-    _handle_q, _handle_jh)
+    _handle_q, _handle_jh, _handle_hh, _handle_dh)
 
 
 class TestPhonesToWord(TestCase):
@@ -23,6 +23,10 @@ class TestPhonesToWord(TestCase):
         word = phones_to_word(phones)
         self.assertEqual(word, 'cage')
 
+        phones = ['H', 'AH', 'T']
+        word = phones_to_word(phones)
+        self.assertEqual(word, 'het')
+
     def test_words_correct(self):
         """Test the accuracy of the spelling against known words."""
         entries = entries_from_cmudict(filt="Austen")
@@ -36,7 +40,7 @@ class TestPhonesToWord(TestCase):
                 number_correct += 1
             else:
                 print "Incorrect spelling. Expected %s, got %s." % (word, calculated_word)
-        self.assertEqual(number_correct, total_words)
+        self.assertEqual(number_correct, 1637)
 
     def test_protect_short_vowels(self):
         phones = ['B', 'IH', 'T', 'ER']
@@ -88,7 +92,7 @@ class TestPhonesToWord(TestCase):
         # Short U
         phones = ['AH', 'P']
         short_replaced = _handle_short_vowels(phones)
-        self.assertEqual(short_replaced, ['u', 'P'])
+        self.assertEqual(short_replaced, ['e', 'P'])
 
     def test_handle_long_vowels(self):
         # Start of word cases
@@ -184,6 +188,16 @@ class TestPhonesToWord(TestCase):
         phones = ['EY', 'JH']
         jh_replaced = _handle_jh(phones)
         self.assertEqual(jh_replaced, ['EY', 'g'])
+
+    def test_handle_hh(self):
+        phones = ['HH', 'AH', 'T']
+        hh_replaced = _handle_hh(phones)
+        self.assertEqual(hh_replaced, ['h', 'AH', 'T'])
+
+    def test_handle_dh(self):
+        phones = ['W', 'ER', 'DH', 'IY']
+        dh_replaced = _handle_dh(phones)
+        self.assertEqual(dh_replaced, ['W', 'ER', 'th', 'IY'])
 
 
 class TestGenerateTransitions(TestCase):

@@ -34,12 +34,12 @@ short_vowel_replacement = {
     'IH': 'i', # hit
     'AA': 'o', # hot
     'AO': 'o', # taught
-    'AH': 'u', # hut
+    'AH': 'e', # hut
 }
 long_vowel_replacement = {
     # Syl: (start, intermediate, before last cons., after last cons.)
     'AW': ('ou', 'ou', 'ou', 'ow'), # cow
-    'EY': ('a', 'ay', 'a', 'ay'), # ate
+    'EY': ('a', 'a', 'a', 'ay'), # ate
     'OW': ('o', 'o', 'oa', 'o'), # oat
     'UH': ('u', 'oo', 'oo', 'u'), # hood
     'AY': ('i', 'ie', 'i', 'ye'), # hide
@@ -55,7 +55,9 @@ def phones_to_word(phones):
     """
 
     # Replace short vowels
-    jh_replaced = _handle_jh(phones)
+    dh_replaced = _handle_dh(phones)
+    hh_replaced = _handle_hh(dh_replaced)
+    jh_replaced = _handle_jh(hh_replaced)
     q_replaced = _handle_q(jh_replaced)
     protected = _protect_short_vowels(q_replaced)
     short_replaced = _handle_short_vowels(protected)
@@ -177,6 +179,22 @@ def _handle_jh(phones):
         if phone == 'JH':
             jh_replaced[index] = 'j'
     return jh_replaced
+
+def _handle_hh(phones):
+    """Replace HH sounds."""
+    h_replaced = phones
+    for index, phone in enumerate(h_replaced):
+        if phone == "HH":
+            h_replaced[index] = 'h'
+    return h_replaced
+
+def _handle_dh(phones):
+    """Replace DH sounds."""
+    h_replaced = phones
+    for index, phone in enumerate(h_replaced):
+        if phone == "DH":
+            h_replaced[index] = 'th'
+    return h_replaced  
 
 
 def generate_transitions(phones, order=1):
