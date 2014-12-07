@@ -55,7 +55,8 @@ def phones_to_word(phones):
     """
 
     # Replace short vowels
-    q_replaced = _handle_q(phones)
+    jh_replaced = _handle_jh(phones)
+    q_replaced = _handle_q(jh_replaced)
     protected = _protect_short_vowels(q_replaced)
     short_replaced = _handle_short_vowels(protected)
     long_replaced = _handle_long_vowels(short_replaced)
@@ -136,7 +137,7 @@ def _handle_q(phones):
 
 
 def _handle_c(phones):
-    """C sounds get replaced."""
+    """Replace C sounds."""
 
     c_replaced = phones
 
@@ -165,6 +166,17 @@ def _handle_c(phones):
             c_replaced[index] = 'c'
 
     return c_replaced
+
+
+def _handle_jh(phones):
+    """Replace JH sounds."""
+    jh_replaced = phones
+    if jh_replaced[-1] == 'JH':
+        jh_replaced[-1] = 'g'
+    for index, phone in enumerate(jh_replaced):
+        if phone == 'JH':
+            jh_replaced[index] = 'j'
+    return jh_replaced
 
 
 def generate_transitions(phones, order=1):

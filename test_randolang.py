@@ -6,7 +6,7 @@ from randolang import (
     order_from_transitions_dict, generate_word, _generate_phone,
     entries_from_cmudict, austen_words, phones_to_word,
     _protect_short_vowels, _handle_long_vowels, _handle_c,
-    _handle_q)
+    _handle_q, _handle_jh)
 
 
 class TestPhonesToWord(TestCase):
@@ -18,6 +18,25 @@ class TestPhonesToWord(TestCase):
         phones = ['AE', 'K', 'W', 'IH', 'T']
         word = phones_to_word(phones)
         self.assertEqual(word, 'aquit')
+
+        phones = ['K', 'EY', 'JH']
+        word = phones_to_word(phones)
+        self.assertEqual(word, 'cage')
+
+    def test_words_correct(self):
+        """Test the accuracy of the spelling against known words."""
+        entries = entries_from_cmudict(filt="Austen")
+        number_correct = 774
+        total_words = len(entries)
+        for entry in entries:
+            word, phones = entry
+            cleaned_phones = [_clean_phone(phone) for phone in phones]
+            calculated_word = phones_to_word(cleaned_phones)
+            if word == calculated_word:
+                number_correct += 1
+            else:
+                print "Incorrect spelling. Expected %s, got %s." % (word, calculated_word)
+        self.assertEqual(number_correct, total_words)
 
     def test_protect_short_vowels(self):
         phones = ['B', 'IH', 'T', 'ER']
@@ -36,6 +55,8 @@ class TestPhonesToWord(TestCase):
 
         # Don't double DH
         phones = ['P', 'UH', 'DH', 'IY']
+        phones_protected = _protect_short_vowels(phones)
+        self.assertEqual(phones_protected, ['P', 'UH', 'DH', 'IY'])
 
 
     def test_handle_short_vowels(self):
@@ -154,6 +175,15 @@ class TestPhonesToWord(TestCase):
         phones = ['a', 'K', 'W', 'i', 'er']
         q_replaced = _handle_q(phones)
         self.assertEqual(q_replaced, ['a', 'qu', 'i', 'er'])
+
+    def test_handle_jh(self):
+        phones = ['AH', 'N', 'JH', 'AH', 'S', 'T']
+        jh_replaced = _handle_jh(phones)
+        self.assertEqual(jh_replaced, ['AH', 'N', 'j', 'AH', 'S', 'T'])
+
+        phones = ['EY', 'JH']
+        jh_replaced = _handle_jh(phones)
+        self.assertEqual(jh_replaced, ['EY', 'g'])
 
 
 class TestGenerateTransitions(TestCase):
