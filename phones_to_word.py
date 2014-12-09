@@ -31,6 +31,11 @@ def phones_to_word(phones):
     Note: Assumes emphasis numbers have been stripped.
     """
     # First, handle vowel sounds
+    # Start with ending long vowels
+    if phones[-1] in long_vowel_replacement.keys():
+        long_vowel = phones[-1]
+        spelling = long_vowel_replacement[long_vowel][2]
+        phones[-1] = spelling
     # Iterate over phones starting from the end
     for index in range(len(phones))[-1::-1]:
         phone = phones[index]
