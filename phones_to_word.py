@@ -30,7 +30,12 @@ def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
     Note: Assumes emphasis numbers have been stripped.
     """
-    # replace phone groups from right to left
+    # First, handle vowel sounds
+    # Iterate over phones starting from the end
+    for index in range(len(phones))[-1::-1]:
+        phone = phones[index]
+        if phone in long_vowel_replacement.keys():
+            pass
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)

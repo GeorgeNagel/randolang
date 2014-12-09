@@ -175,7 +175,7 @@ class GenerateWordTest(TestCase):
             }
         }
         word = generate_word(transitions_dict, 10)
-        self.assertEqual(word, 'bu')
+        self.assertEqual(word, 'buh')
 
     def test_long_word_cutoff(self):
         transitions_dict = {
@@ -217,7 +217,7 @@ class GenerateWordTest(TestCase):
             }
         }
         word = generate_word(transitions_dict, 10)
-        self.assertEqual(word, 'bu')
+        self.assertEqual(word, 'buh')
 
 class GeneratePhonemeTest(TestCase):
     def test_generate_phoneme(self):
