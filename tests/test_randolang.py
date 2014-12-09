@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from randolang import (
-    generate_transitions, _clean_phone,
+    generate_transitions, _clean_phones,
     generate_transitions_dict, add_transition_to_dict,
     order_from_transitions_dict, generate_word, _generate_phone,
     entries_from_cmudict, austen_words)
@@ -37,11 +37,11 @@ class TestGenerateTransitions(TestCase):
             ]
         )
 
-class TestCleanPhone(TestCase):
-    def test_clean_phone(self):
-        phone = 'AA1'
-        cleaned_phone = _clean_phone(phone)
-        self.assertEqual(cleaned_phone, 'AA')
+class TestCleanPhones(TestCase):
+    def test_clean_phones(self):
+        phones = ['AA1']
+        cleaned_phones = _clean_phones(phones)
+        self.assertEqual(cleaned_phones, ['AA'])
 
 class TestGenerateTransitionsDict(TestCase):
     def setUp(self):

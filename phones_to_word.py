@@ -1,20 +1,3 @@
-vowels = [
-    'AA', # odd
-    'AH', # hut
-    'AW', # cow
-    'EH', # Ed
-    'EY', # ate
-    'IH', # it
-    'OW', # oat
-    'UH', # hood
-    'AE', # at
-    'AO', # ought
-    'AY', # hide
-    'ER', # hurt
-    'IY', # eat
-    'OY', # toy
-    'UW', # two
-]
 consonants = [
     'B', 'CH', 'D', 'DH', 'F', 'G', 'HH', 'JH',
     'K', 'L', 'M', 'N', 'NG', 'P', 'R', 'S',
@@ -28,36 +11,28 @@ short_vowel_replacement = {
     'AA': 'o', # hot
     'AO': 'o', # taught
     'AH': 'e', # hut
+    'UH': 'oo', # good
+    'ER': 'ur', # hurt
 }
 long_vowel_replacement = {
-    # Syl: (start, intermediate, before last cons., after last cons.)
-    'AW': ('ou', 'ou', 'ou', 'ow'), # cow
-    'EY': ('a', 'a', 'a', 'ay'), # ate
-    'OW': ('o', 'o', 'oa', 'o'), # oat
-    'UH': ('u', 'oo', 'oo', 'u'), # hood
-    'AY': ('i', 'ie', 'i', 'ye'), # hide
-    'ER': ('ur', 'ur', 'er', 'er'), # hurt
-    'IY': ('ea', 'ee', 'ee', 'y'), # eat
-    'OY': ('oy', 'oy', 'oi', 'oy'), # toy
-    'UW': ('u', 'u', 'oo', 'oo'), # two
+    # vowel: (VVC form, VCV form, CVV form (end form))
+    'AW': ('ou', '', 'ow'), # loud, , cow
+    'EY': ('ai', 'a', 'ay'), # braid, ate, delay
+    'OW': ('oa', 'o', 'ow'), # oat, broke, flow
+    'AY': ('ie', 'i', 'igh'), # fried, ice, nigh
+    'IY': ('ee', 'e', 'y'), # sleep, impede, early
+    'OY': ('oi', '', 'oy'), # boil, , toy
+    'UW': ('oo', 'u', 'ue'), # boom, flute, subdue
 }
+vowels = [short_vowel_replacement.keys() + long_vowel_replacement.keys()]
 
 def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
     Note: Assumes emphasis numbers have been stripped.
     """
+    # replace phone groups from right to left
 
-    # Replace short vowels
-    dh_replaced = _handle_dh(phones)
-    hh_replaced = _handle_hh(dh_replaced)
-    jh_replaced = _handle_jh(hh_replaced)
-    q_replaced = _handle_q(jh_replaced)
-    protected = _protect_short_vowels(q_replaced)
-    short_replaced = _handle_short_vowels(protected)
-    long_replaced = _handle_long_vowels(short_replaced)
-    c_replaced = _handle_c(long_replaced)
-
-    lowered_phones = [phone.lower() for phone in c_replaced]
+    lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)
     return word
 

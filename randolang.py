@@ -1,4 +1,5 @@
 from collections import defaultdict
+import copy
 import random
 import os
 
@@ -13,14 +14,15 @@ def generate_transitions(phones, order=1):
     transitions = []
     for index in range(len(padded_phones) - order):
         transition = padded_phones[index:index + order + 1]
-        transition = [_clean_phone(phone) for phone in transition]
+        transition = _clean_phones(transition)
         transitions.append(transition)
     return transitions
 
 
-def _clean_phone(phone):
+def _clean_phones(phones):
     """Strips emphasis, etc. from phones."""
-    return phone.strip('0123456789')
+    phones_copy = copy.copy(phones)
+    return [phone.strip('0123456789') for phone in phones_copy]
 
 
 def generate_transitions_dict(entries, order=1):
