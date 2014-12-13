@@ -67,135 +67,38 @@ def phones_to_word(phones):
             # Replace short vowels
             spelling = short_vowel_replacement[phone][0]
             phones[index] = spelling
+        else:
+            # Handle multi-letter consonants
+            if phone == 'ZH':
+                phones[index] = 'si'
+            elif phone == 'JH':
+                phones[index] = 'j'
+            elif phone == 'HH':
+                phones[index] = 'h'
+            elif phone == 'DH':
+                phones[index] = 'th'
+            elif len(phone) == 2:
+                # Keep the spelling of the remaining consonants
+                pass
+            # Protect short vowels
+            elif index+1 < len(phones) and phones[index+1][0] == 'e':
+                if index-1 >= 0 and phones[index-1] in short_vowel_replacement.keys():
+                    if phone == 'K':
+                        # Special case handling of doubles
+                        phones[index] = 'ck'
+                    else:
+                        phones.insert(index+1, phone)
+            # Handle remaining K sounds
+            elif phone == 'K':
+                phones[index] = 'c'
+
+
+    # Handle ending consonants not altered by VCV form
+    if phones[-1] == 'JH':
+        phones[-1] = 'ge'
+    elif phones[-1] == 'Z':
+        phones[-1] = 's'
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)
     return word
-
-def _protect_short_vowels(phones):
-    """Double consonants following short vowels."""
-    protected_phones = phones
-    if len(phones) > 2:
-        for index, phone in enumerate(protected_phones):
-            if phone in short_vowel_replacement:
-                if index+2 < len(protected_phones):
-                    if protected_phones[index+1] in consonants:
-                        # Make sure you don't double HH, TH, SH, ZH, DH, JH
-                        if len(protected_phones[index+1]) == 1:
-                            if protected_phones[index+2] not in consonants:
-                                protected_phones[index+1] = protected_phones[index+1].lower()*2
-    return protected_phones
-
-def _handle_short_vowels(phones):
-    """Short vowels get replaced by single, lowercase letter"""
-    short_replaced = []
-    for phone in phones:
-        if phone in short_vowel_replacement:
-            short_replaced.append(short_vowel_replacement[phone])
-        else:
-            short_replaced.append(phone)
-    return short_replaced
-
-def _handle_long_vowels(phones):
-    # Handle start long vowels
-    long_replaced = phones
-    if phones[0] in long_vowel_replacement:
-        long_replaced[0] = long_vowel_replacement[phones[0]][0]
-
-    # Handle long vowel before last consonant
-    if len(phones) > 1:
-        if phones[-1] not in vowels:
-            previous_long_vowel = phones[-2]
-            # Special case handling for 'ates' types (['EY', 'T', 'S'])
-            if phones[-2] in long_vowel_replacement:
-                long_replaced[-2] = long_vowel_replacement[phones[-2]][2]
-                long_replaced.append('e')
-            elif phones[-2] in consonants:
-                if len(phones) > 2 and phones[-3] in long_vowel_replacement:
-                    long_replaced[-3] = long_vowel_replacement[phones[-3]][2]
-                    long_replaced.insert(-1, 'e')
-
-    # Handle ending long vowels
-    if phones[-1] in long_vowel_replacement:
-        long_replaced[-1] = long_vowel_replacement[phones[-1]][3]
-
-    # Handle remaining (intermediate) long vowels
-    for index, phone in enumerate(long_replaced):
-        if phone in long_vowel_replacement:
-            long_replaced[index] = long_vowel_replacement[phone][1]
-
-    return long_replaced
-
-
-def _handle_q(phones):
-    q_replaced = []
-    index = 0
-    while index < len(phones):
-        phone = phones[index]
-        if index+1 < len(phones):
-            if phone == 'K' and phones[index+1] == 'W':
-                phone = 'qu'
-                # Skip the w and continue with the rest of the phones
-                index += 1
-        q_replaced.append(phone)
-        index += 1
-    return q_replaced
-
-
-def _handle_c(phones):
-    """Replace C sounds."""
-
-    c_replaced = phones
-
-    # cc to protect short vowel
-    # ck protects short vowel when followed by e i or y
-    for index, phone in enumerate(c_replaced):
-        if phone == 'kk':
-            c_replaced[index] = 'cc'
-            if index+1 < len(c_replaced):
-                if c_replaced[index+1][0] in ['e', 'i', 'y']:
-                    c_replaced[index] = 'ck'
-
-    # use k when followed by e i or y
-    for index, phone in enumerate(c_replaced):
-        if index+1 < len(c_replaced):
-            if phone == 'K' and c_replaced[index+1][0] in ['e', 'i', 'y']:
-                c_replaced[index] = 'k'
-
-    # ck always follows short vowel at the end of a monosyllable
-    if c_replaced[-1] == 'K':
-        c_replaced[-1] = 'ck'
-
-    # fall back to using plain c
-    for index, phone in enumerate(c_replaced):
-        if phone == 'K':
-            c_replaced[index] = 'c'
-
-    return c_replaced
-
-
-def _handle_jh(phones):
-    """Replace JH sounds."""
-    jh_replaced = phones
-    if jh_replaced[-1] == 'JH':
-        jh_replaced[-1] = 'g'
-    for index, phone in enumerate(jh_replaced):
-        if phone == 'JH':
-            jh_replaced[index] = 'j'
-    return jh_replaced
-
-def _handle_hh(phones):
-    """Replace HH sounds."""
-    h_replaced = phones
-    for index, phone in enumerate(h_replaced):
-        if phone == "HH":
-            h_replaced[index] = 'h'
-    return h_replaced
-
-def _handle_dh(phones):
-    """Replace DH sounds."""
-    h_replaced = phones
-    for index, phone in enumerate(h_replaced):
-        if phone == "DH":
-            h_replaced[index] = 'th'
-    return h_replaced  
