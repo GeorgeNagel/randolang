@@ -5,14 +5,15 @@ consonants = [
 ]
 
 short_vowel_replacement = {
-    'AE': 'a', # after
-    'EH': 'e', # hen
-    'IH': 'i', # hit
-    'AA': 'o', # hot
-    'AO': 'o', # taught
-    'AH': 'a', # hut
-    'UH': 'oo', # good
-    'ER': 'ur', # hurt
+    # vowel: (intermediate, ending)
+    'AE': ('a', 'ah'), # after
+    'EH': ('e', 'eh'), # hen
+    'IH': ('i', 'ih'), # hit
+    'AA': ('o', 'aw'), # hot
+    'AO': ('o', 'aw'), # taught
+    'AH': ('a', 'uh'), # hut
+    'UH': ('oo', 'uh'), # good
+    'ER': ('ur', 'er'), # hurt
 }
 long_vowel_replacement = {
     # vowel: (VVC form, VCV form, CVV form (end form))
@@ -35,6 +36,9 @@ def phones_to_word(phones):
     if phones[-1] in long_vowel_replacement.keys():
         long_vowel = phones[-1]
         spelling = long_vowel_replacement[long_vowel][2]
+        phones[-1] = spelling
+    elif phones[-1] in short_vowel_replacement.keys():
+        spelling = short_vowel_replacement[phones[-1]][1]
         phones[-1] = spelling
     # Iterate over phones starting from the end
     for index in range(len(phones))[-2::-1]:
@@ -61,7 +65,7 @@ def phones_to_word(phones):
                 phones[index] = long_vowel_replacement[phone][1] or long_vowel_replacement[phone][0]
         elif phone in short_vowel_replacement.keys():
             # Replace short vowels
-            spelling = short_vowel_replacement[phone]
+            spelling = short_vowel_replacement[phone][0]
             phones[index] = spelling
 
     lowered_phones = [phone.lower() for phone in phones]
