@@ -10,7 +10,7 @@ short_vowel_replacement = {
     'IH': 'i', # hit
     'AA': 'o', # hot
     'AO': 'o', # taught
-    'AH': 'e', # hut
+    'AH': 'a', # hut
     'UH': 'oo', # good
     'ER': 'ur', # hurt
 }
@@ -37,10 +37,22 @@ def phones_to_word(phones):
         spelling = long_vowel_replacement[long_vowel][2]
         phones[-1] = spelling
     # Iterate over phones starting from the end
-    for index in range(len(phones))[-1::-1]:
+    for index in range(len(phones))[-2::-1]:
         phone = phones[index]
         if phone in long_vowel_replacement.keys():
-            pass
+            if (index-1 >= 0 and phones[index - 1] in consonants) and (index+1 < len(phones) and phones[index + 1] in consonants):
+                # Previous phone is a consonant. Next phone is a consonant.
+                # Safe to use VVC form.
+                spelling = long_vowel_replacement[phone][0]
+                phones[index] = spelling
+            if index-1 >=0 and phones[index-1] in vowels:
+                if index+1 < len(phones) and phones[index+1] in consonants:
+                    # VCV Form
+                    phones.insert(index+1, 'e')
+            # Inspect consonants after any long vowels found
+            # Potentially look two letters ahead
+            # If you have two consonants, you need VVC pattern
+            # If you have a vowel, you need VCV pattern, probsly
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)

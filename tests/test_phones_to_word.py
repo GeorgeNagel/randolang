@@ -7,7 +7,7 @@ from randolang import entries_from_cmudict, _clean_phones
 class TestPhonesToWord(TestCase):
     def test_phones_to_word(self):
         cases = [
-            (['B', 'IH', 'D'], ['bihd'])
+            (['B', 'IH', 'D'], ['bid'])
         ]
         for case in cases:
             phones, spellings = case
@@ -28,4 +28,4 @@ class TestPhonesToWord(TestCase):
                 number_correct += 1
             else:
                 print "Incorrect spelling. Expected %s, got %s. Phones: %s" % (word, calculated_word, phones)
-        self.assertEqual(number_correct, 44)
+        self.assertEqual(number_correct, 164)
