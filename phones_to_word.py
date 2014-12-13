@@ -40,19 +40,29 @@ def phones_to_word(phones):
     for index in range(len(phones))[-2::-1]:
         phone = phones[index]
         if phone in long_vowel_replacement.keys():
+            # Replace long vowels
             if (index-1 >= 0 and phones[index - 1] in consonants) and (index+1 < len(phones) and phones[index + 1] in consonants):
                 # Previous phone is a consonant. Next phone is a consonant.
                 # Safe to use VVC form.
                 spelling = long_vowel_replacement[phone][0]
                 phones[index] = spelling
-            if index-1 >=0 and phones[index-1] in vowels:
-                if index+1 < len(phones) and phones[index+1] in consonants:
-                    # VCV Form
-                    phones.insert(index+1, 'e')
-            # Inspect consonants after any long vowels found
-            # Potentially look two letters ahead
-            # If you have two consonants, you need VVC pattern
-            # If you have a vowel, you need VCV pattern, probsly
+            elif index+1 < len(phones) and phones[index+1] in consonants:
+                # Previous phone is a vowel. Next phone is a consonant.
+                # VCV Form
+                spelling = long_vowel_replacement[phone][1]
+                if spelling:
+                    phones[index] = spelling
+                    phones.insert(index+2, 'e')
+                else:
+                    spelling = long_vowel_replacement[phone][0]
+                    phones[index] = spelling
+            else:
+                # Next phone is a vowel
+                phones[index] = long_vowel_replacement[phone][1] or long_vowel_replacement[phone][0]
+        elif phone in short_vowel_replacement.keys():
+            # Replace short vowels
+            spelling = short_vowel_replacement[phone]
+            phones[index] = spelling
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)
