@@ -29,4 +29,4 @@ class TestPhonesToWord(TestCase):
                 number_correct += 1
             else:
                 print "Incorrect spelling. Expected %s, got %s. Phones: %s" % (word, calculated_word, phones)
-        self.assertEqual(number_correct, 867)
+        self.assertEqual(number_correct, 879)

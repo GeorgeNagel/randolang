@@ -101,4 +101,11 @@ def phones_to_word(phones):
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)
+    if 'kw' in word or 'cw' in word:
+        letters = [letter for letter in word]
+        for index, letter in enumerate(letters):
+            if letter == 'w' and index > 0 and letters[index-1] in ['k', 'c']:
+                letters[index-1] = 'q'
+                letters[index] = 'u'
+        word = ''.join(letters)
     return word
