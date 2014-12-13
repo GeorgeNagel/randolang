@@ -18,3 +18,10 @@ $ venv/bin/nosetests
 ```
 $ venv/bin/python generate_words.py
 ```
+## Example output
+```
+camaturd hezan inturvan icnicstrand plansurnd survabal gry thred langgwin danst nieser groanouns ouurs injoias pocat opurting wands reezortelthy yooth rits sivly saltid galaty laim soal icseptoonatray erats turmantractiv consoal haitrabal questamp rejointaching yeeld residurs affer gaining reelaits sassenid beging hoalsamnattees counsaland wonas trabal cords pravodow recning pains saloot shrabal win acs inclooding ragreefly pradasseed coshan sam atrictaishan medad alied midst ricorsaw hiematly mesier licly cofy proovs dispurd icspurswasian dispursians pacing laf increashean wurs inventid enlorge taibal equiattees periting top stacs sacsensistraind ord hedan shoaldid wok ap lam ocyalaits
+```
+## TODO
+1. Improved spelling going from sounds to spelling in new words is hard. It's hard even in existing words.
+2. Allow different languages as inputs. Enable sliders so that fake words sound more like Latin versus more like German.
