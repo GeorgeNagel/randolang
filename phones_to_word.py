@@ -36,7 +36,9 @@ suffixes = {
 }
 prefixes = {
     ('S', 'AH', 'B'): 'sub',
-    ('P', 'R', 'AH'): 'pro'
+    ('P', 'R', 'AH'): 'pro',
+    ('P', 'R', 'AA'): 'pro',
+    ('S', 'ER'): 'sur'
 }
 
 def phones_to_word(phones):
@@ -52,7 +54,7 @@ def phones_to_word(phones):
 
     # Handle spellings of known prefixes
     prefix = None
-    for phone_length in [3]:
+    for phone_length in [3, 2]:
         starting_phones = tuple(phones[:phone_length])
         if starting_phones in prefixes:
             prefix = starting_phones
@@ -61,13 +63,14 @@ def phones_to_word(phones):
 
     # First, handle vowel sounds
     # Start with ending long vowels
-    if phones[-1] in long_vowel_replacement.keys():
-        long_vowel = phones[-1]
-        spelling = long_vowel_replacement[long_vowel][2]
-        phones[-1] = spelling
-    elif phones[-1] in short_vowel_replacement.keys():
-        spelling = short_vowel_replacement[phones[-1]][1]
-        phones[-1] = spelling
+    if phones:
+        if phones[-1] in long_vowel_replacement.keys():
+            long_vowel = phones[-1]
+            spelling = long_vowel_replacement[long_vowel][2]
+            phones[-1] = spelling
+        elif phones[-1] in short_vowel_replacement.keys():
+            spelling = short_vowel_replacement[phones[-1]][1]
+            phones[-1] = spelling
     # Iterate over phones starting from the end
     for index in range(len(phones))[-2::-1]:
         phone = phones[index]
@@ -122,10 +125,13 @@ def phones_to_word(phones):
 
 
     # Handle ending consonants not altered by VCV form
-    if phones[-1] == 'JH':
-        phones[-1] = 'ge'
-    elif phones[-1] == 'Z':
-        phones[-1] = 's'
+    if phones:
+        if phones[-1] == 'JH':
+            phones[-1] = 'ge'
+        elif phones[-1] == 'Z':
+            phones[-1] = 's'
+        elif phones[-1] == 'DH':
+            phones[-1] = 'th'
 
     # Tack prefixes back on
     if prefix:
