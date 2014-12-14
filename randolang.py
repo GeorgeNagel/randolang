@@ -81,9 +81,7 @@ def generate_word(transitions_dict, max_phone_size):
 
     # Remove 'START' and 'STOP' markers
     phones = phones[order:-order]
-    print "Phones: %s" % phones
     novel_word = phones_to_word(phones)
-    print "Word: %s" % novel_word
     return novel_word
 
 def _generate_phone(transitions_dict, prior_phones):
