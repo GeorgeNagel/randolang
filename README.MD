@@ -1,4 +1,7 @@
-# Generate random english-sounding words.
+# Generate random English-sounding words.
+
+## How it works
+A Markov chain of phonemes (small vocal sound unites) is built up based on a small (approximately 7000 words) English dictionary. New words are generated using the phonetic Markov chain and finally spelled out using a rudimentary spelling algorithm.
 
 ## Set up the python environment.
 ```
