@@ -1,19 +1,25 @@
-from randolang import generate_word, generate_transitions_dict, entries_from_cmudict
+from randolang import (
+    generate_word, generate_markov_tree, entries_from_cmudict,
+    entries_from_mhyph
+)
 
 WORDS_TO_GENERATE = 1000
-MAX_PHONE_SIZE = 100
+MAX_TRANSITIONS = 100
 ORDER = 3
+method = 'cmu'
 
-cmu_entries = entries_from_cmudict(filt='Austen')
-
-
-print "Generating transitions dict."
-transitions_dict = generate_transitions_dict(cmu_entries, order=ORDER)
-print "Done generating transitions dict."
+if method == 'cmu':
+    cmu_entries = entries_from_cmudict(filt='Austen')
+    print "Generating transitions dict."
+    sequences = [phones for word,phones in cmu_entries]
+    transitions_dict = generate_markov_tree(sequences, order=ORDER)
+    print "Done generating transitions dict."
+elif method == 'mhyph':
+    mhyph_entries = entries_from_mhyph(filt='Austen')
 
 words = []
 for i in range(WORDS_TO_GENERATE):
-    word = generate_word(transitions_dict, MAX_PHONE_SIZE)
+    word = generate_word(transitions_dict, MAX_TRANSITIONS)
     words.append(word)
 
 story = ' '.join(words)

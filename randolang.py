@@ -1,4 +1,3 @@
-# coding=utf-8
 from collections import defaultdict
 import copy
 import random
@@ -57,46 +56,46 @@ def add_transition_to_tree(markov_tree, transition):
     return markov_tree
 
 
-def order_from_transitions_dict(transitions_dict, order=0):
-    """Calculate the order of a transitions_dict."""
-    for key in transitions_dict:
+def order_from_markov_tree(markov_tree, order=0):
+    """Calculate the order of a markov tree."""
+    for key in markov_tree:
         _order = order + 1
-        if isinstance(transitions_dict[key], dict):
-            order = order_from_transitions_dict(transitions_dict[key], order=_order)
+        if isinstance(markov_tree[key], dict):
+            order = order_from_markov_tree(markov_tree[key], order=_order)
         break
     return order
 
 
-def generate_word(transitions_dict, max_phone_size):
-    """generate words based on the phoneme transition probabilities."""
-    order = order_from_transitions_dict(transitions_dict)
-    phones = ['START'] * order
-    prior_phones = phones
+def generate_new_sequence(markov_tree, max_sequence_size):
+    """Generate a new based on transition probabilities."""
+    order = order_from_markov_tree(markov_tree)
+    sequence = ['START'] * order
+    prior_sequence = sequence
     iters = 0
-    while prior_phones != ['STOP']*order and iters <= max_phone_size + order - 1:
+    while prior_sequence != ['STOP']*order and iters <= max_sequence_size + order - 1:
         iters +=1
-        next_phone = _generate_phone(transitions_dict, prior_phones)
-        phones.append(next_phone)
-        prior_phones = phones[-order:]
+        next_element = _generate_sequence_element(markov_tree, prior_sequence)
+        sequence.append(next_element)
+        prior_sequence = sequence[-order:]
 
     # Remove 'START' and 'STOP' markers
-    phones = phones[order:-order]
-    novel_word = phones_to_word(phones)
-    return novel_word
+    sequence = sequence[order:-order]
+    return sequence
 
-def _generate_phone(transitions_dict, prior_phones):
-    """Generate the next phone in the sequence."""
-    sub_dict = transitions_dict
-    for prior_phone in prior_phones:
-        sub_dict = sub_dict[prior_phone]
-    # Now select the next phone based on its probability of occurrence
+
+def _generate_sequence_element(markov_tree, prior_sequence):
+    """Generate the next element in the markov sequence."""
+    sub_tree = markov_tree
+    for prior_element in prior_sequence:
+        sub_tree = sub_tree[prior_element]
+    # Now select the next element based on its probability of occurrence
     possible_nexts = []
-    for next_phoneme in sub_dict:
-        number_of_appearances = sub_dict[next_phoneme]
-        nexts = [next_phoneme]*number_of_appearances
+    for next_element in sub_tree:
+        number_of_appearances = sub_tree[next_element]
+        nexts = [next_element]*number_of_appearances
         possible_nexts.extend(nexts)
-    next_phoneme = random.choice(possible_nexts)
-    return next_phoneme
+    next_element = random.choice(possible_nexts)
+    return next_element
 
 
 def entries_from_cmudict(filt=None):
@@ -125,21 +124,25 @@ def entries_from_mhyph(filt=None):
     cwd = os.getcwd()
     mhyph_path = 'data/corpora/gutenberg/mhyph.txt'
     mhyph_full_path = os.path.join(cwd, mhyph_path)
-    entries = []
+    sequences = []
     with open(mhyph_full_path, 'r') as fin:
-        lines = fin.readlines()
         entries = {}
+        lines = fin.readlines()
         for line in lines:
             # Only use single words
-            if ' ' in line:
+            if ' ' in line or '-' in line:
                 continue
-            syllables = line.split('¥')
+            line = line.strip()
+            syllables = line.split('\xa5')
             word = ''.join(syllables)
             entries[word] = syllables
+        words = sorted([word for word in entries])
         if filt == 'Austen':
             filter_words = austen_words()
-            entries = [entry for entry in entries if entry in filter_words]
-    return entries
+            sequences = [entries[word] for word in words if word in filter_words]
+        else:
+            sequences = [entries[word] for word in words]
+    return sequences
 
 
 def austen_words():

@@ -3,8 +3,8 @@ from unittest import TestCase
 from randolang import (
     generate_transitions, _clean_phones,
     generate_markov_tree, add_transition_to_tree,
-    order_from_transitions_dict, generate_word, _generate_phone,
-    entries_from_cmudict, austen_words)
+    order_from_markov_tree, generate_new_sequence, _generate_sequence_element,
+    entries_from_cmudict, entries_from_mhyph, austen_words)
 
 
 
@@ -140,30 +140,30 @@ class AddTransitionTestCase(TestCase):
             }
         )
 
-class OrderFromTransitionsDictTest(TestCase):
-    def test_first_order_transitions_dict(self):
-        transitions_dict = {
+class OrderFromMarkovTreeTest(TestCase):
+    def test_first_order_tree(self):
+        markov_tree = {
             'B': {
                 'AH': 1
             }
         }
-        order = order_from_transitions_dict(transitions_dict)
+        order = order_from_markov_tree(markov_tree)
         self.assertEqual(order, 1)
 
-    def test_second_order_transitions_dict(self):
-        transitions_dict = {
+    def test_second_order_tree(self):
+        markov_tree = {
             'B': {
                 'UH': {
                     'B': 1
                 }
             }
         }
-        order = order_from_transitions_dict(transitions_dict)
+        order = order_from_markov_tree(markov_tree)
         self.assertEqual(order, 2)
 
-class GenerateWordTest(TestCase):
-    def test_first_order_word(self):
-        transitions_dict = {
+class GenerateSequenceTest(TestCase):
+    def test_first_order(self):
+        markov_tree = {
             'START': {
                 'B': 1
             },
@@ -174,11 +174,11 @@ class GenerateWordTest(TestCase):
                 'STOP': 1
             }
         }
-        word = generate_word(transitions_dict, 10)
-        self.assertEqual(word, 'buh')
+        sequence = generate_new_sequence(markov_tree, 10)
+        self.assertEqual(sequence, ['B', 'UH'])
 
-    def test_long_word_cutoff(self):
-        transitions_dict = {
+    def test_cutoff(self):
+        markov_tree = {
             'START': {
                 'B': 1
             },
@@ -192,11 +192,11 @@ class GenerateWordTest(TestCase):
                 'STOP': 1
             }
         }
-        word = generate_word(transitions_dict, 1)
-        self.assertEqual(word, 'b')
+        sequence = generate_new_sequence(markov_tree, 1)
+        self.assertEqual(sequence, ['B'])
 
-    def test_second_order_word(self):
-        transitions_dict = {
+    def test_second_order(self):
+        markov_tree = {
             'START': {
                 'START': {
                     'B': 1
@@ -216,21 +216,21 @@ class GenerateWordTest(TestCase):
                 }
             }
         }
-        word = generate_word(transitions_dict, 10)
-        self.assertEqual(word, 'buh')
+        sequence = generate_new_sequence(markov_tree, 10)
+        self.assertEqual(sequence, ['B', 'UH'])
 
-class GeneratePhonemeTest(TestCase):
-    def test_generate_phoneme(self):
-        prior_phones = ['START', 'START']
-        transitions_dict = {
+class GenerateSequenceElementTest(TestCase):
+    def test_generate_sequence_element(self):
+        prior_sequence = ['START', 'START']
+        markov_tree = {
             'START': {
                 'START': {
                     'B': 1
                 }
             }
         }
-        phone = _generate_phone(transitions_dict, prior_phones)
-        self.assertEqual(phone, 'B')
+        element = _generate_sequence_element(markov_tree, prior_sequence)
+        self.assertEqual(element, 'B')
 
 class EntriesTest(TestCase):
     def test_entries_from_cmudict(self):
@@ -240,11 +240,24 @@ class EntriesTest(TestCase):
             [(u'a', [u'AH0']), (u'a.', [u'EY1'])]
         )
 
-    def test_filtered_entries(self):
+    def test_filtered_cmu_entries(self):
         entries = entries_from_cmudict(filt='Austen')
         self.assertEqual(
             entries[:2],
             [(u'a', [u'AH0']), (u'a', [u'EY1'])]
+        )
+
+    def test_mhyph_entries(self):
+        entries = entries_from_mhyph()
+        self.assertEqual(
+            entries[:2],
+            [['Aa', 'chen'], ['Aal', 'borg']]
+        )
+    def test_mhyph_filtered(self):
+        entries = entries_from_mhyph(filt='Austen')
+        self.assertEqual(
+            entries[:2],
+            [['ab', 'bey'], ['ab', 'hor']]
         )
 
 class AustenWordsTest(TestCase):
