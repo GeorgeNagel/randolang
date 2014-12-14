@@ -27,10 +27,25 @@ long_vowel_replacement = {
 }
 vowels = [short_vowel_replacement.keys() + long_vowel_replacement.keys()]
 
+suffixes = {
+    ('SH', 'AH', 'N'): 'tion',
+    ('SH', 'AH', 'N', 'S'): 'tions',
+    ('S', 'AH', 'M'): 'some',
+    ('EH', 'R', 'IY'): 'ary',
+    ('ER', 'IY'): 'ery'
+}
+
 def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
     Note: Assumes emphasis numbers have been stripped.
     """
+    # Handle spellings of any known suffixes
+    for phone_length in [4, 3, 2]:
+        ending_phones = tuple(phones[-phone_length:])
+        if ending_phones in suffixes:
+            spelling = suffixes[ending_phones]
+            phones[-phone_length:] = [spelling]
+
     # First, handle vowel sounds
     # Start with ending long vowels
     if phones[-1] in long_vowel_replacement.keys():

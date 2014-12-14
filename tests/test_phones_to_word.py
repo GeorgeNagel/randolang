@@ -16,7 +16,7 @@ class TestPhonesToWord(TestCase):
             self.assertIn(calculated_word, spellings)
 
     def test_words_correct(self):
-        """Test the accuracy of the spelling against known words."""
+        """Test the accuracy of the spelling against existing words."""
         entries = entries_from_cmudict(filt="Austen")
         number_correct = 0
         total_words = len(entries)
@@ -29,4 +29,4 @@ class TestPhonesToWord(TestCase):
                 number_correct += 1
             else:
                 print "Incorrect spelling. Expected %s, got %s. Phones: %s" % (word, calculated_word, phones)
-        self.assertEqual(number_correct, 879)
+        self.assertEqual(number_correct, 917)
