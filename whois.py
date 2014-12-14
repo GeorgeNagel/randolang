@@ -1,5 +1,6 @@
 """Generate vacant, pronouncable domain names."""
 from socket import error as socket_error
+from time import sleep
 
 import pythonwhois
 
@@ -31,5 +32,6 @@ while len(available_domains) < DOMAINS_TO_GENERATE:
             print "%s is taken." % domain
     except socket_error as e:
         print "Socket error: %s" % e
-
+    # Don't send requests too frequently
+    sleep(2)
 print "Available domains: %s" % available_domains
