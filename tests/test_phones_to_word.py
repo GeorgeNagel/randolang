@@ -8,7 +8,8 @@ class TestPhonesToWord(TestCase):
     def test_phones_to_word(self):
         cases = [
             (['B', 'IH', 'D'], ['bid']),
-            (['C', 'R', 'IY', 'EY', 'T'], ['create', 'creeate'])
+            (['C', 'R', 'IY', 'EY', 'T'], ['create', 'creeate']),
+            (['AH', 'N', 'G', 'R', 'EY', 'T', 'F', 'AH', 'L'], ['ungrateful', 'ungraitful'])
         ]
         for case in cases:
             phones, spellings = case
@@ -29,4 +30,4 @@ class TestPhonesToWord(TestCase):
                 number_correct += 1
             else:
                 print "Incorrect spelling. Expected %s, got %s. Phones: %s" % (word, calculated_word, phones)
-        self.assertEqual(number_correct, 985)
+        self.assertEqual(number_correct, 994)

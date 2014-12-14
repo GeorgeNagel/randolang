@@ -34,6 +34,10 @@ suffixes = {
     ('EH', 'R', 'IY'): 'ary',
     ('ER', 'IY'): 'ery'
 }
+prefixes = {
+    ('S', 'AH', 'B'): 'sub',
+    ('P', 'R', 'AH'): 'pro'
+}
 
 def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
@@ -45,6 +49,15 @@ def phones_to_word(phones):
         if ending_phones in suffixes:
             spelling = suffixes[ending_phones]
             phones[-phone_length:] = [spelling]
+
+    # Handle spellings of known prefixes
+    prefix = None
+    for phone_length in [3]:
+        starting_phones = tuple(phones[:phone_length])
+        if starting_phones in prefixes:
+            prefix = starting_phones
+            phones = phones[phone_length:]
+            break
 
     # First, handle vowel sounds
     # Start with ending long vowels
@@ -113,6 +126,11 @@ def phones_to_word(phones):
         phones[-1] = 'ge'
     elif phones[-1] == 'Z':
         phones[-1] = 's'
+
+    # Tack prefixes back on
+    if prefix:
+        spelling = prefixes[prefix]
+        phones = [spelling] + phones
 
     lowered_phones = [phone.lower() for phone in phones]
     word = ''.join(lowered_phones)
