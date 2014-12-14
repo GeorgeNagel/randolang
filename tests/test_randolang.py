@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from randolang import (
     generate_transitions, _clean_phones,
-    generate_transitions_dict, add_transition_to_dict,
+    generate_markov_tree, add_transition_to_tree,
     order_from_transitions_dict, generate_word, _generate_phone,
     entries_from_cmudict, austen_words)
 
@@ -43,14 +43,14 @@ class TestCleanPhones(TestCase):
         cleaned_phones = _clean_phones(phones)
         self.assertEqual(cleaned_phones, ['AA'])
 
-class TestGenerateTransitionsDict(TestCase):
+class TestGenerateMarkovTree(TestCase):
     def setUp(self):
-        self.entries = [
-            ('booboo', ['B0', 'UW1', 'B', 'UW1'])
+        self.sequences = [
+            ['B0', 'UW1', 'B', 'UW1']
         ]
 
-    def test_generate_transitions_dict(self):
-        transitions_dict = generate_transitions_dict(self.entries, order=1)
+    def test_generate_markov_tree(self):
+        transitions_dict = generate_markov_tree(self.sequences, order=1)
         self.assertEqual(
             transitions_dict,
             {
@@ -68,7 +68,7 @@ class TestGenerateTransitionsDict(TestCase):
         )
 
     def test_second_order(self):
-        transitions_dict = generate_transitions_dict(self.entries, order=2)
+        transitions_dict = generate_markov_tree(self.sequences, order=2)
         self.assertEqual(
             transitions_dict,
             {
@@ -100,14 +100,14 @@ class TestGenerateTransitionsDict(TestCase):
 class AddTransitionTestCase(TestCase):
     def test_add_first_order(self):
         transition = ('B', 'UW')
-        transitions_dict = {
+        markov_tree = {
             'B': {
                 'AH': 1
             }
         }
-        add_transition_to_dict(transitions_dict, transition)
+        add_transition_to_tree(markov_tree, transition)
         self.assertEqual(
-            transitions_dict,
+            markov_tree,
             {
                 'B': {
                     'AH': 1,
@@ -118,16 +118,16 @@ class AddTransitionTestCase(TestCase):
 
     def test_add_second_order(self):
         transition = ('B', 'UW', 'K')
-        transitions_dict = {
+        markov_tree = {
             'B': {
                 'AH': {
                     'T': 1
                 }
             }
         }
-        add_transition_to_dict(transitions_dict, transition)
+        add_transition_to_tree(markov_tree, transition)
         self.assertEqual(
-            transitions_dict,
+            markov_tree,
             {
                 'B': {
                     'AH': {

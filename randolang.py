@@ -1,3 +1,4 @@
+# coding=utf-8
 from collections import defaultdict
 import copy
 import random
@@ -25,36 +26,35 @@ def _clean_phones(phones):
     return [phone.strip('0123456789') for phone in phones_copy]
 
 
-def generate_transitions_dict(entries, order=1):
-    """Takes entries from the cmudict and converts them to a transitions dict."""
-    transitions_dict = {}
-    for entry in entries:
-        word, pron_list = entry
-        transitions = generate_transitions(pron_list, order=order)
+def generate_markov_tree(sequences, order=1):
+    """Creates a markov tree from a sequence of sequences."""
+    markov_tree = {}
+    for sequence in sequences:
+        transitions = generate_transitions(sequence, order=order)
         for transition in transitions:
-            add_transition_to_dict(transitions_dict, transition)
-    return transitions_dict
+            add_transition_to_tree(markov_tree, transition)
+    return markov_tree
 
 
-def add_transition_to_dict(transitions_dict, transition):        
+def add_transition_to_tree(markov_tree, transition):        
     if len(transition) > 2:
         # Add the next transition to the sub-dict
-        first_phone = transition[0]
-        subsequent_transition = transition[1:]
-        if first_phone not in transitions_dict:
-            transitions_dict[first_phone] = {}
-        sub_dict = transitions_dict[first_phone]
-        sub_dict = add_transition_to_dict(sub_dict, subsequent_transition)
-        transitions_dict[first_phone] = sub_dict
+        first = transition[0]
+        subsequent = transition[1:]
+        if first not in markov_tree:
+            markov_tree[first] = {}
+        sub_tree = markov_tree[first]
+        sub_tree = add_transition_to_tree(sub_tree, subsequent)
+        markov_tree[first] = sub_tree
     else:
         # Add this transition to the dict
-        first_phone, second_phone = transition
-        if first_phone  not in transitions_dict:
-            transitions_dict[first_phone] = {}
-        if second_phone not in transitions_dict[first_phone]:
-            transitions_dict[first_phone][second_phone] = 0
-        transitions_dict[first_phone][second_phone] += 1
-    return transitions_dict
+        first, second = transition
+        if first  not in markov_tree:
+            markov_tree[first] = {}
+        if second not in markov_tree[first]:
+            markov_tree[first][second] = 0
+        markov_tree[first][second] += 1
+    return markov_tree
 
 
 def order_from_transitions_dict(transitions_dict, order=0):
@@ -115,6 +115,30 @@ def entries_from_cmudict(filt=None):
         filter_words = austen_words()
         filtered_entries = [(entry[0], entry[1]) for entry in entries if entry[0] in filter_words]
         entries = filtered_entries
+    return entries
+
+
+def entries_from_mhyph(filt=None):
+    """Create a list of entries from the mhyph corpus.
+    If filt='Austen', only uses words that appear in Jane Austen's Emma.
+    """
+    cwd = os.getcwd()
+    mhyph_path = 'data/corpora/gutenberg/mhyph.txt'
+    mhyph_full_path = os.path.join(cwd, mhyph_path)
+    entries = []
+    with open(mhyph_full_path, 'r') as fin:
+        lines = fin.readlines()
+        entries = {}
+        for line in lines:
+            # Only use single words
+            if ' ' in line:
+                continue
+            syllables = line.split('¥')
+            word = ''.join(syllables)
+            entries[word] = syllables
+        if filt == 'Austen':
+            filter_words = austen_words()
+            entries = [entry for entry in entries if entry in filter_words]
     return entries
 
 
