@@ -11,9 +11,9 @@ short_vowel_replacement = {
     'IH': ('i', 'ih'), # hit
     'AA': ('o', 'aw'), # hot
     'AO': ('o', 'aw'), # taught
-    'AH': ('a', 'uh'), # hut
+    'AH': ('u', 'uh'), # hut
     'UH': ('oo', 'uh'), # good
-    'ER': ('ur', 'er'), # hurt
+    'ER': ('er', 'er'), # hurt
 }
 long_vowel_replacement = {
     # vowel: (VVC form, VCV form, CVV form (end form))
@@ -101,7 +101,7 @@ def phones_to_word(phones):
                     if phone == 'K':
                         # Special case handling of doubles
                         phones[index] = 'ck'
-                    else:
+                    elif phones[index-1] != 'ER':
                         phones.insert(index+1, phone)
             # Handle remaining K sounds
             elif phone == 'K':
