@@ -1,8 +1,6 @@
-from randolang import (
-    generate_new_sequence, generate_markov_tree, entries_from_cmudict,
-    entries_from_mhyph
-)
+from markov import generate_new_sequence, generate_markov_tree
 from phones_to_word import phones_to_word
+from randolang import entries_from_cmudict, entries_from_mhyph
 
 PHONES_METHOD = 'phones_method'
 SYLLABLES_METHOD = 'syllables_method'
@@ -16,7 +14,7 @@ method = SYLLABLES_METHOD
 print "Generating Markov tree."
 if method == PHONES_METHOD:
     cmu_entries = entries_from_cmudict(filt='Austen')
-    sequences = [phones for word,phones in cmu_entries]
+    sequences = [phones for word, phones in cmu_entries]
     markov_tree = generate_markov_tree(sequences, order=ORDER)
 elif method == SYLLABLES_METHOD:
     mhyph_entries = entries_from_mhyph(filt='Austen')

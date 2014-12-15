@@ -60,7 +60,6 @@ def generate_new_sequence(markov_tree, max_sequence_size):
     prior_sequence = sequence
     iters = 0
     while True:
-        print "PRIOR: %s" % prior_sequence
         if prior_sequence == ['STOP']*order:
             break
         if iters > max_sequence_size + order - 1:
