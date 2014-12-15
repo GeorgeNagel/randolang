@@ -23,14 +23,14 @@ class EntriesTest(TestCase):
         entries = entries_from_mhyph()
         self.assertEqual(
             entries[:2],
-            [['Aa', 'chen'], ['Aal', 'borg']]
+            [('Aachen', ['Aa', 'chen']), ('Aalborg', ['Aal', 'borg'])]
         )
 
     def test_mhyph_filtered(self):
         entries = entries_from_mhyph(filt='Austen')
         self.assertEqual(
             entries[:2],
-            [['ab', 'bey'], ['ab', 'hor']]
+            [('abbey', ['ab', 'bey']), ('abhor', ['ab', 'hor'])]
         )
 
 
