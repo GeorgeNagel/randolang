@@ -6,24 +6,24 @@ consonants = [
 
 short_vowel_replacement = {
     # vowel: (intermediate, ending)
-    'AE': ('a', 'ah'), # after
-    'EH': ('e', 'eh'), # hen
-    'IH': ('i', 'ih'), # hit
-    'AA': ('o', 'aw'), # hot
-    'AO': ('o', 'aw'), # taught
-    'AH': ('u', 'uh'), # hut
-    'UH': ('oo', 'uh'), # good
-    'ER': ('er', 'er'), # hurt
+    'AE': ('a', 'ah'),  # after
+    'EH': ('e', 'eh'),  # hen
+    'IH': ('i', 'ih'),  # hit
+    'AA': ('o', 'aw'),  # hot
+    'AO': ('o', 'aw'),  # taught
+    'AH': ('u', 'uh'),  # hut
+    'UH': ('oo', 'uh'),  # good
+    'ER': ('er', 'er'),  # hurt
 }
 long_vowel_replacement = {
     # vowel: (VVC form, VCV form, CVV form (end form))
-    'AW': ('ou', '', 'ow'), # loud, , cow
-    'EY': ('ai', 'a', 'ay'), # braid, ate, delay
-    'OW': ('oa', 'o', 'ow'), # oat, broke, flow
-    'AY': ('ie', 'i', 'igh'), # fried, ice, nigh
-    'IY': ('ee', 'e', 'y'), # sleep, impede, early
-    'OY': ('oi', '', 'oy'), # boil, , toy
-    'UW': ('oo', 'u', 'ue'), # boom, flute, subdue
+    'AW': ('ou', '', 'ow'),  # loud, , cow
+    'EY': ('ai', 'a', 'ay'),  # braid, ate, delay
+    'OW': ('oa', 'o', 'ow'),  # oat, broke, flow
+    'AY': ('ie', 'i', 'igh'),  # fried, ice, nigh
+    'IY': ('ee', 'e', 'y'),  # sleep, impede, early
+    'OY': ('oi', '', 'oy'),  # boil, , toy
+    'UW': ('oo', 'u', 'ue'),  # boom, flute, subdue
 }
 vowels = [short_vowel_replacement.keys() + long_vowel_replacement.keys()]
 
@@ -40,6 +40,7 @@ prefixes = {
     ('P', 'R', 'AA'): 'pro',
     ('S', 'ER'): 'sur'
 }
+
 
 def phones_to_word(phones):
     """Convert a list of phones like 'AA' to a string.
