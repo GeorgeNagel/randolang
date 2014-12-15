@@ -4,22 +4,40 @@ from time import sleep
 
 import pythonwhois
 
-from randolang import generate_word, generate_transitions_dict, entries_from_cmudict
+from randolang import (
+    generate_new_sequence, generate_markov_tree, entries_from_cmudict,
+    entries_from_mhyph
+)
+from phones_to_word import phones_to_word
+
+PHONES_METHOD = 'phones_method'
+SYLLABLES_METHOD = 'syllables_method'
 
 DOMAINS_TO_GENERATE = 100
-MAX_PHONE_SIZE = 100
-ORDER = 3
+MAX_SEQUENCE_SIZE = 100
+ORDER = 1
 
-cmu_entries = entries_from_cmudict(filt='Austen')
-print "Generating transitions dict."
-transitions_dict = generate_transitions_dict(cmu_entries, order=ORDER)
-print "Done generating transitions dict."
+method = SYLLABLES_METHOD
+
+print "Generating Markov tree."
+if method == PHONES_METHOD:
+    cmu_entries = entries_from_cmudict(filt='Austen')
+    sequences = [phones for word,phones in cmu_entries]
+    markov_tree = generate_markov_tree(sequences, order=ORDER)
+elif method == SYLLABLES_METHOD:
+    mhyph_entries = entries_from_mhyph(filt='Austen')
+    markov_tree = generate_markov_tree(mhyph_entries, order=ORDER)
+print "Done generating Markov tree."
 
 available_domains = []
 
 while len(available_domains) < DOMAINS_TO_GENERATE:
-    random_word = generate_word(transitions_dict, MAX_PHONE_SIZE)
-    domain = "%s.com" % random_word
+    new_sequence = generate_new_sequence(markov_tree, MAX_SEQUENCE_SIZE)
+    if method == PHONES_METHOD:
+        word = phones_to_word(new_sequence)
+    elif method == SYLLABLES_METHOD:
+        word = ''.join(new_sequence)
+    domain = "%s.com" % word
     try:
         # Check the whois to see if the domain is taken
         response = pythonwhois.get_whois(domain)
