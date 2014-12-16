@@ -2,6 +2,8 @@
 from socket import error as socket_error
 from time import sleep
 
+from pythonwhois.shared import WhoisException
+
 from randolang import generate_words
 from tools.whois_tools import domain_is_available
 
@@ -27,7 +29,7 @@ while len(available_domains) < DOMAINS_TO_GENERATE:
     word = words.pop()
     domain = "%s.com" % word
     if domain in checked_domains:
-        print "Already checked %s. Continuing..."
+        print "Already checked %s. Continuing..." % domain
         continue
     try:
         # Check the whois to see if the domain is taken
@@ -42,7 +44,7 @@ while len(available_domains) < DOMAINS_TO_GENERATE:
             with open(unavailable_path, 'a') as fout:
                 fout.write("%s\n" % domain)
         checked_domains.append(domain)
-    except (socket_error, UnicodeDecodeError) as e:
+    except (socket_error, UnicodeDecodeError, WhoisException) as e:
         print "Whois error while checking %s: %s" % (domain, e)
     # Don't send requests too frequently
     sleep(2)
