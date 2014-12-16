@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from randolang import (
-    entries_from_cmudict, entries_from_mhyph, austen_words)
+from word_data import (
+    entries_from_cmudict, entries_from_mhyph, austen_words, filter_entries)
 
 
 class EntriesTest(TestCase):
@@ -13,7 +13,8 @@ class EntriesTest(TestCase):
         )
 
     def test_filtered_cmu_entries(self):
-        entries = entries_from_cmudict(filt='Austen')
+        entries = entries_from_cmudict()
+        entries = filter_entries(entries, 'Austen')
         self.assertEqual(
             entries[:2],
             [(u'a', [u'AH0']), (u'a', [u'EY1'])]
@@ -23,11 +24,12 @@ class EntriesTest(TestCase):
         entries = entries_from_mhyph()
         self.assertEqual(
             entries[:2],
-            [('Aachen', ['Aa', 'chen']), ('Aalborg', ['Aal', 'borg'])]
+            [('aa', ['a', 'a']), ('aachen', ['aa', 'chen'])]
         )
 
     def test_mhyph_filtered(self):
-        entries = entries_from_mhyph(filt='Austen')
+        entries = entries_from_mhyph()
+        entries = filter_entries(entries, 'Austen')
         self.assertEqual(
             entries[:2],
             [('abbey', ['ab', 'bey']), ('abhor', ['ab', 'hor'])]

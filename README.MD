@@ -41,3 +41,9 @@ Available domains: [u'veriuty.com', u'uforser.com', u'suproov.com',
 ## TODO
 1. Improved spelling going from sounds to spelling in new words is hard. It's hard even in existing words.
 2. Allow different languages as inputs. Enable sliders so that fake words sound more like Latin versus more like German.
+
+## Sources
+This project uses a few freely-available sources.
+1. mhyph (http://www.gutenberg.org/ebooks/3204) for a list of syllabified English words.
+2. CMUDict via nltk (http://www.nltk.org/_modules/nltk/corpus/reader/cmudict.html) for a list of pronunciations of English words.
+3. Jane Austen's Emma via nltk (http://www.gutenberg.org/ebooks/158) for a sane list of common English words.
