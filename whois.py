@@ -2,9 +2,8 @@
 from socket import error as socket_error
 from time import sleep
 
-import pythonwhois
-
 from randolang import generate_words
+from tools.whois_tools import domain_is_available
 
 DOMAINS_TO_GENERATE = 100
 
@@ -20,9 +19,7 @@ while len(available_domains) < DOMAINS_TO_GENERATE:
     domain = "%s.com" % word
     try:
         # Check the whois to see if the domain is taken
-        response = pythonwhois.get_whois(domain)
-        phrase_to_check = 'No match for "%s"' % domain.upper()
-        is_available = phrase_to_check in response['raw'][0]
+        is_available = domain_is_available(domain)
         if is_available:
             print "%s is available." % domain
             available_domains.append(domain)
