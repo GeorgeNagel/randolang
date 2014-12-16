@@ -1,3 +1,5 @@
 venv
 *.DS_Store
 *.pyc
+data/available.txt
+data/unavailable.txt
