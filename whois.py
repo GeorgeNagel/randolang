@@ -20,11 +20,11 @@ with open(unavailable_path, 'r') as fin:
     unavailable_domains = [line.strip() for line in fin.readlines()]
 checked_domains = available_domains + unavailable_domains
 
-words = generate_words(method='syllables', order=1, number_of_words=100)
+words = generate_words(method='tuples', order=1, number_of_words=100)
 
 while len(available_domains) < DOMAINS_TO_GENERATE:
     if not words:
-        words = generate_words(method='syllables',
+        words = generate_words(method='tuples',
                                order=1, number_of_words=100)
     word = words.pop()
     domain = "%s.com" % word

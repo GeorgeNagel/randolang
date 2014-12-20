@@ -15,7 +15,7 @@ def entries_from_cmudict():
     return entries
 
 
-def entries_from_mhyph(filt=None):
+def entries_from_mhyph():
     """Create a list of entries from the mhyph corpus.
     If filt='Austen', only uses words that appear in Jane Austen's Emma.
     """
