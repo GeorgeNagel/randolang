@@ -2,8 +2,6 @@
 import csv
 import os
 
-ROOT_CACHE_PATH = 'data/saved_words'
-
 # Domain status values
 AVAILABLE = 'available'
 UNAVAILABLE = 'unavailable'
@@ -11,6 +9,8 @@ UNKNOWN = 'unknown'
 
 
 class WordsCache(object):
+    root_cache_path = 'data/saved_words'
+
     _words_cache = None
     _domains_cache = None
 
@@ -57,7 +57,7 @@ class WordsCache(object):
 
     def _save_cache(self, cache_name):
         """Write the cache as a csv file."""
-        dir_name = os.path.join(ROOT_CACHE_PATH, cache_name)
+        dir_name = os.path.join(self.root_cache_path, cache_name)
         headers = ['Word', 'TLD', 'Availability']
         cache = self._cache.get(cache_name, {})
         rows = [headers]
@@ -79,11 +79,13 @@ class WordsCache(object):
         self._load_cache('syllables')
 
     def _load_cache(self, cache_name):
-        dir_name = os.path.join(ROOT_CACHE_PATH, cache_name)
+        dir_name = os.path.join(self.root_cache_path, cache_name)
         file_path = os.path.join(dir_name, 'words.csv')
+        if not os.path.exists(file_path):
+            return
         # Open the words file, create it if it doesn't exist
         rows = []
-        with open(file_path, 'w+') as fin:
+        with open(file_path, 'r') as fin:
             reader = csv.reader(fin)
             rows = [row for row in reader]
         # Skip the header row
