@@ -54,6 +54,7 @@ def _generate_words_syllables(number_of_words=100,
             continue
         else:
             words_cache.add_word('syllables', new_word)
+            print "New word: %s" % new_word
             number_generated += 1
     return words_cache
 
@@ -80,6 +81,7 @@ def _generate_words_phones(number_of_words=100,
             continue
         else:
             words_cache.add_word('phones', new_word)
+            print "New word: %s" % new_word
             number_generated += 1
     return words_cache
 
@@ -104,6 +106,7 @@ def _generate_words_tuples(number_of_words=100,
         # Don't overwrite data for words already in the cache
         if new_word not in cached_words:
             words_cache.add_word('tuples', new_word)
+            print "New word: %s" % new_word
             number_generated += 1
     return words_cache
 
