@@ -15,7 +15,8 @@ def check_domains(words_cache, method, tld, skip_checked=True):
                 continue
         domain = '%s%s' % (word, tld)
         availability = domain_availability(domain)
-        words_cache.add_word(method, word, tld=tld, status=availability)
+        print "Domain: %s. Availability: %s" % (domain, availability)
+        words_cache.add_word(method, word, tld=tld, availability=availability)
     words_cache.save_all_caches()
 
 

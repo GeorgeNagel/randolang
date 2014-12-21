@@ -6,7 +6,7 @@ from tools.whois_tools import check_domains
 if __name__ == '__main__':
     method = sys.argv[1]
     tld = sys.argv[2]
-    if len(sys.argv > 3):
+    if len(sys.argv) > 3:
         skip_checked = bool(int(sys.argv[3]))
     else:
         skip_checked = True
