@@ -34,18 +34,18 @@ class WordsCache(object):
     def get_words(self, cache_name):
         return self._cache.get(cache_name, {})
 
-    def add_word(self, cache_name, word, tld='.com', status=UNKNOWN):
+    def add_word(self, cache_name, word, tld='.com', availability=UNKNOWN):
         """Adds a word to the cache.
         cache_name - Scheme used to generate word.
             One of 'tuples', 'syllables', 'phones'
         word - The generated word.
         tld - TLD, e.g. '.com'
-        status - Domain availability status.
+        availability - Domain availability status.
             One of AVAILABLE, UNAVAILABLE, UNKNOWN
         """
         cache = self._cache.get(cache_name, {})
         domain_dict = cache.get(word, {})
-        domain_dict[tld] = status
+        domain_dict[tld] = availability
         cache[word] = domain_dict
         self._cache[cache_name] = cache
 
@@ -91,4 +91,4 @@ class WordsCache(object):
         # Skip the header row
         for row in rows[1:]:
             word, tld, availability = row
-            self.add_word(cache_name, word, tld=tld, status=availability)
+            self.add_word(cache_name, word, tld=tld, availability=availability)

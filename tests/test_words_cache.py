@@ -10,7 +10,7 @@ class TestWordsCache(TestCase):
     def test_add_word(self):
         words_cache = WordsCache()
         words_cache.add_word(
-            'syllables', 'bungle', tld='.net', status=AVAILABLE
+            'syllables', 'bungle', tld='.net', availability=AVAILABLE
         )
         self.assertEqual(
             words_cache._cache,
