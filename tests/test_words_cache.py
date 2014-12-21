@@ -54,7 +54,7 @@ class TestWordsCache(TestCase):
         words_cache = WordsCache()
         testing_dir = os.path.dirname(os.path.realpath(__file__))
         words_cache.root_cache_path = os.path.join(
-            testing_dir, 'fixtures/data'
+            testing_dir, 'fixtures/data/saved_words'
         )
 
         words_cache.load_all_caches()
