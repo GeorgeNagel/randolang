@@ -54,10 +54,13 @@ class WordsCache(object):
         self._save_cache('phones')
         self._save_cache('tuples')
         self._save_cache('syllables')
+        self._save_cache('letters')
 
     def _save_cache(self, cache_name):
         """Write the cache as a csv file."""
         dir_name = os.path.join(self.root_cache_path, cache_name)
+        if not os.path.exists(dir_name):
+            os.mkdir(dir_name)
         headers = ['Word', 'TLD', 'Availability']
         cache = self._cache.get(cache_name, {})
         rows = [headers]
@@ -77,6 +80,7 @@ class WordsCache(object):
         self._load_cache('phones')
         self._load_cache('tuples')
         self._load_cache('syllables')
+        self._load_cache('letters')
 
     def _load_cache(self, cache_name):
         dir_name = os.path.join(self.root_cache_path, cache_name)
