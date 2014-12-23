@@ -1,4 +1,4 @@
-# Generate random English-sounding words.
+# Generate random English-sounding words and check for available domain names.
 
 ## How it works
 A Markov chain of phonemes (small vocal sound unites) is built up based on a small (approximately 7000 words) English dictionary. New words are generated using the phonetic Markov chain and finally spelled out using a rudimentary spelling algorithm.
@@ -18,26 +18,35 @@ $ pip install -r requirements.txt
 $ venv/bin/nosetests
 ```
 ## Generate some random words
+There are several methods to create new words. Three methods use a Markov process using different building blocks: 'letters', 'phones', and 'syllables'. A fourth method, 'tuples' creates new words by randomly combining existing words.
+
+Usage: venv/bin/python generate_words.py <method> <number of words> <order>, where order is the order of the markov process. When using the 'words' method, order is the number of words to combine.
+
 ```
-$ venv/bin/python generate_words.py
+$ venv/bin/python generate_words.py syllables 100 2
+Number of words: 100. Method: syllables. Order: 2
+Generating words...
+New word: subjectionable
+New word: stipulative
+...
+New word: preparagus
+Done
 ```
-## Example output
-```
-camaturd hezan inturvan icnicstrand plansurnd survabal gry thred langgwin danst nieser groanouns ouurs injoias pocat opurting wands reezortelthy yooth rits sivly saltid galaty laim soal icseptoonatray erats turmantractiv consoal haitrabal questamp rejointaching yeeld residurs affer gaining reelaits sassenid beging hoalsamnattees counsaland wonas trabal cords pravodow recning pains saloot shrabal win acs inclooding ragreefly pradasseed coshan sam atrictaishan medad alied midst ricorsaw hiematly mesier licly cofy proovs dispurd icspurswasian dispursians pacing laf increashean wurs inventid enlorge taibal equiattees periting top stacs sacsensistraind ord hedan shoaldid wok ap lam ocyalaits
-```
+Words are also saved in a .csv file in data/saved_words.
 
 ## Check for available .com domains
+You can check the availability of domains using these new words with the usage: venv/bin/python check_domains.py <method> <tld> <skip_checked>.
+
 ```
-$ venv/bin/python whis.py
-Generating transitions dict.
-Done generating transitions dict.
-veriuty.com is available.
-uforser.com is available.
-ciet.com is taken.
+$ venv/bin/python check_domains.py syllables .com 1
+Domain: emony.com. Availability: unavailable
+Domain: inabilious.com. Availability: available
 ...
-Available domains: [u'veriuty.com', u'uforser.com', u'suproov.com',
-...
+Domain: perfectionately.com. Availability: available
 ```
+This will update the relevant csv file in data/saved_words.
+
+
 ## TODO
 1. Improved spelling going from sounds to spelling in new words is hard. It's hard even in existing words.
 2. Allow different languages as inputs. Enable sliders so that fake words sound more like Latin versus more like German.
