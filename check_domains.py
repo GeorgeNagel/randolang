@@ -1,3 +1,11 @@
+"""Check domains for generated words.
+
+Usage: python check_domains <cache_name> <tld> <skip_checked>
+cache_name - One of 'letters', 'phones', 'syllables', 'tuples'
+tld - E.g. '.com'
+skip_checked - 0 or 1. Whether or not to re-check already-checked domains.
+"""
+
 import sys
 
 from tools.words_cache import WordsCache

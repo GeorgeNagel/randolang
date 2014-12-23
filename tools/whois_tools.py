@@ -1,6 +1,6 @@
 from socket import error as socket_error
 
-import pythonwhois
+from pythonwhois.net import get_whois_raw
 from pythonwhois.shared import WhoisException
 
 from tools.words_cache import AVAILABLE, UNAVAILABLE, UNKNOWN
@@ -22,9 +22,9 @@ def check_domains(words_cache, method, tld, skip_checked=True):
 
 def domain_availability(domain):
     try:
-        response = pythonwhois.get_whois(domain)
+        raw = get_whois_raw(domain)[0]
         phrase_to_check = 'No match for "%s"' % domain.upper()
-        is_available = phrase_to_check in response['raw'][0]
+        is_available = phrase_to_check in raw
         if is_available:
             availability = AVAILABLE
         else:
