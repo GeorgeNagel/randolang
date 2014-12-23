@@ -1,7 +1,7 @@
-# Generate random English-sounding words and check for available domain names.
+# Generate random English-sounding words.
 
 ## How it works
-A Markov chain of phonemes (small vocal sound unites) is built up based on a small (approximately 7000 words) English dictionary. New words are generated using the phonetic Markov chain and finally spelled out using a rudimentary spelling algorithm.
+A small (approximately 7000 words) English dictionary is broken down into units (letters, phones, or syllables) and a Markov process is used to generate new words. When using phones as the word unit, a rudimentary spelling algorithm is used to create pronouncable English words.
 
 ## Set up the python environment.
 ```
@@ -18,9 +18,9 @@ $ pip install -r requirements.txt
 $ venv/bin/nosetests
 ```
 ## Generate some random words
-There are several methods to create new words. Three methods use a Markov process using different building blocks: 'letters', 'phones', and 'syllables'. A fourth method, 'tuples' creates new words by randomly combining existing words.
+There are several methods to create new words. Three methods use a Markov process using different building blocks: letters, phones, and syllables. A fourth method, tuples, creates new words by randomly combining existing words.
 
-Usage: venv/bin/python generate_words.py <method> <number of words> <order>, where order is the order of the markov process. When using the 'words' method, order is the number of words to combine.
+Usage: ```venv/bin/python generate_words.py <method> <number of words> <order>``` where order is the order of the markov process. When using the 'words' method, order is the number of words to combine.
 
 ```
 $ venv/bin/python generate_words.py syllables 100 2
@@ -35,7 +35,7 @@ Done
 Words are also saved in a .csv file in data/saved_words.
 
 ## Check for available .com domains
-You can check the availability of domains using these new words with the usage: venv/bin/python check_domains.py <method> <tld> <skip_checked>.
+You can check the availability of domains using these new words with the usage: ```venv/bin/python check_domains.py <method> <tld> <skip_checked>```
 
 ```
 $ venv/bin/python check_domains.py syllables .com 1
