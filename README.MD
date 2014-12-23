@@ -1,7 +1,7 @@
-# Generate random English-sounding words.
+# Generate new English-like words.
 
 ## How it works
-A small (approximately 7000 words) English dictionary is broken down into units (letters, phones, or syllables) and a Markov process is used to generate new words. When using phones as the word unit, a rudimentary spelling algorithm is used to create pronouncable English words.
+A small (approximately 7000 words) English dictionary is broken down into units (letters, phones, or syllables) and a Markov process is used to generate new words. When using phones as the word unit, a rudimentary spelling algorithm is used to create English-pronouncable words.
 
 ## Set up the python environment.
 ```
@@ -34,8 +34,8 @@ Done
 ```
 Words are also saved in a .csv file in data/saved_words.
 
-## Check for available .com domains
-You can check the availability of domains using these new words with the usage: ```venv/bin/python check_domains.py <method> <tld> <skip_checked>```
+## Check for available domains
+You can check the availability of domains using these new words with the usage: ```venv/bin/python check_domains.py <method> <tld> <skip_checked>```. When skip_checked is '0', domains which were already checked according to the relevant .csv file will be checked again. 
 
 ```
 $ venv/bin/python check_domains.py syllables .com 1
@@ -48,8 +48,8 @@ This will update the relevant csv file in data/saved_words.
 
 
 ## TODO
-1. Improved spelling going from sounds to spelling in new words is hard. It's hard even in existing words.
-2. Allow different languages as inputs. Enable sliders so that fake words sound more like Latin versus more like German.
+1. Improved spelling when using the 'phones' method. Spelling from phones in new words is hard. It's hard even in existing words.
+2. Allow different languages as inputs so that fake words sound more like Latin versus more like German.
 
 ## Sources
 This project uses a few freely-available sources.
